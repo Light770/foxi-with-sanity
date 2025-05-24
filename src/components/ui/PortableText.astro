@@ -1,0 +1,43 @@
+---
+import { urlFor } from '../../lib/sanity'
+import { toHTML } from '@portabletext/to-html'
+
+const { content } = Astro.props
+
+// Define custom serializers for Portable Text
+const components = {
+  block: {
+    h1: ({children}) => `<h1 class="text-4xl font-bold mt-8 mb-4">${children}</h1>`,
+    h2: ({children}) => `<h2 class="text-3xl font-bold mt-8 mb-4">${children}</h2>`,
+    h3: ({children}) => `<h3 class="text-2xl font-bold mt-6 mb-3">${children}</h3>`,
+    h4: ({children}) => `<h4 class="text-xl font-bold mt-6 mb-3">${children}</h4>`,
+    normal: ({children}) => `<p class="mb-4">${children}</p>`,
+    blockquote: ({children}) => `<blockquote class="border-l-4 border-primary-500 pl-4 py-2 italic mb-4">${children}</blockquote>`,
+  },
+  list: {
+    bullet: ({children}) => `<ul class="list-disc list-inside mb-4">${children}</ul>`,
+    number: ({children}) => `<ol class="list-decimal list-inside mb-4">${children}</ol>`,
+  },
+  listItem: {
+    bullet: ({children}) => `<li class="mb-2">${children}</li>`,
+    number: ({children}) => `<li class="mb-2">${children}</li>`,
+  },
+  marks: {
+    strong: ({children}) => `<strong class="font-bold">${children}</strong>`,
+    em: ({children}) => `<em class="italic">${children}</em>`,
+    code: ({children}) => `<code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">${children}</code>`,
+    link: ({value, children}) => `<a href="${value?.href}" class="text-primary-600 hover:underline" target="_blank" rel="noopener noreferrer">${children}</a>`,
+  },
+  types: {
+    image: ({value}) => {
+      const imageUrl = urlFor(value).width(800).url()
+      return `<img src="${imageUrl}" alt="${value.alt || ''}" class="w-full my-8 rounded-lg" />`
+    },
+  },
+}
+
+// Convert Portable Text to HTML
+const html = toHTML(content, {components})
+---
+
+<div class="prose prose-lg dark:prose-invert max-w-none" set:html={html} />

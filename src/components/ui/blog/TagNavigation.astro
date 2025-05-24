@@ -1,0 +1,48 @@
+---
+// Tags for the Blog and post pages
+
+// Components
+// - UI
+import Badge from '../Badge.astro'
+
+// Data - Now from Sanity
+import { getAllTags } from '../../../lib/sanity'
+const tags = await getAllTags() as string[]
+const sortedTags = tags.sort((a, b) => a.localeCompare(b))
+
+// Improved current tag detection
+const currentPath = new URL(Astro.request.url).pathname
+const pathSegments = currentPath.split('/').filter((segment) => segment.length > 0)
+
+// Debug log
+console.log('Current path:', currentPath)
+console.log('Path segments:', pathSegments)
+
+// If we're on a tag page, get the tag
+let currentTag = ''
+if (pathSegments.length >= 3 && pathSegments[1] === 'tags') {
+  currentTag = pathSegments[2]
+  console.log('Current tag detected:', currentTag)
+}
+---
+
+<div class="tags">
+	<Badge link={`/blog/`} name={`All`} type={`${currentTag === 'blog' ? 'primary' : 'neutral'}`} />
+	{
+		sortedTags.map((tag) => (
+			<>
+				<Badge
+					link={`/blog/tags/${tag.toLowerCase()}`}
+					name={tag}
+					type={`${currentTag === tag.toLowerCase() ? 'primary' : 'neutral'}`}
+				/>
+			</>
+		))
+	}
+</div>
+
+<style>
+	.tags {
+		@apply mb-6 flex flex-row flex-wrap items-center justify-start gap-2 capitalize;
+	}
+</style>

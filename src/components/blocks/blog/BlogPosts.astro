@@ -1,0 +1,62 @@
+---
+// Blog Posts grid Section
+// ------------
+// Description: A grid of blog posts sorted by date in a 3 column layout.
+// Properties:
+// - data: An array of blog posts
+
+// Components
+// - Layout
+import Section from '../../../components/ui/Section.astro'
+import Row from '../../../components/ui/Row.astro'
+import Col from '../../../components/ui/Col.astro'
+// - UI
+import Post from '../../../components/ui/cards/BlogCard.astro'
+import TagNavigation from '../../../components/ui/blog/TagNavigation.astro'
+
+// Props
+type Props = {
+	data: any
+}
+const { data: posts } = Astro.props
+
+// Sort posts by date (uncomment if needed)
+// const sortedPosts = posts.sort((a: any, b: any) => {
+// 	return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+// })
+
+// Default SEO for section (if not provided by parent)
+const SEO = {
+	title: 'Blog Posts',
+	description: 'Latest posts from our blog'
+}
+
+// <Layout title={SEO.title} description={SEO.description}>
+// 	<Hero title={header.title} text={header.text} />
+// 	<BlogPosts data={transformedPosts} />
+// </Layout>
+
+---
+
+<Section>
+	<Row>
+		<Col span="12">
+			<TagNavigation />
+		</Col>
+		{
+			posts.map((post: any) => (
+				<Col span="4">
+					<Post
+						link={`/blog/${post.id}`}
+						title={post.data.title}
+						subtitle={`By ${post.data.author} on ${new Date(post.data.pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`}
+						image={post.data.image}
+						tags={post.data.tags}
+					>
+						{post.data.description}
+					</Post>
+				</Col>
+			))
+		}
+	</Row>
+</Section>

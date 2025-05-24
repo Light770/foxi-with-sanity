@@ -1,0 +1,61 @@
+---
+// Blog Index Page
+// ------------
+// Description: The blog index page.
+
+// Components
+// - Layout
+import Layout from '../../layouts/Layout.astro'
+// - UI
+import Hero from '../../components/blocks/hero/PageHeader.astro'
+import BlogPosts from '../../components/blocks/blog/BlogPosts.astro'
+
+// Data - Now from Sanity instead of content collections
+import { getAllBlogPosts } from '../../lib/sanity'
+
+// Define types for the blog post data
+interface BlogPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  description: string;
+  pubDate: string;
+  author: string;
+  image: string;
+  tags?: string[];
+}
+
+// Content
+// - SEO
+const SEO = {
+	title: 'Foxi | Latest Foxi News and updates',
+	description:
+		"Explore Foxi's latest news designed to enhance productivity, ensure top-notch security, and integrate seamlessly with your favorite tools. Join thousands of satisfied users and transform your workflow with Foxi today!"
+}
+// - Page Header
+const header = {
+	title: 'The <strong>Foxi</strong> Blog. Tips, Updates & Stories',
+	text: 'Stay informed, stay productive. All the latest from the world of Foxi.'
+}
+
+// Fetch all posts from Sanity
+const allPosts = await getAllBlogPosts()
+
+// Transform Sanity posts to match the existing format
+const transformedPosts = allPosts.map((post: BlogPost) => ({
+	id: post.slug.current,
+	data: {
+		title: post.title,
+		description: post.description,
+		pubDate: new Date(post.pubDate),
+		author: post.author,
+		image: post.image,
+		tags: post.tags || []
+	}
+}))
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={header.title} text={header.text} />
+	<BlogPosts data={transformedPosts} />
+</Layout>

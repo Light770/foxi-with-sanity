@@ -1,0 +1,83 @@
+---
+// Blog Tag Page
+// ------------
+// Description: The blog tag page.
+
+// Components
+// - Layout
+import Layout from '../../../layouts/Layout.astro'
+// - UI
+import Hero from '../../../components/blocks/hero/PageHeader.astro'
+import BlogPosts from '../../../components/blocks/blog/BlogPosts.astro'
+
+// Data - Now from Sanity
+import { getAllTags, getPostsByTag } from '../../../lib/sanity'
+
+// Define types for the blog post data
+interface BlogPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  description: string;
+  pubDate: string;
+  author: string;
+  image: string;
+  tags?: string[];
+}
+
+export async function getStaticPaths() {
+	const allTags = await getAllTags() as string[]
+
+	return allTags.map((tag) => {
+		return {
+			params: { tag: tag.toLowerCase() },
+			props: { tag, originalTag: tag } // Keep original tag for display
+		}
+	})
+}
+
+const { tag } = Astro.params
+const { originalTag } = Astro.props
+
+// Debug what tag we're actually using for query
+console.log(`Fetching posts for tag: ${tag}, originalTag: ${originalTag}`)
+// We need to use the original tag for the query, not the lowercase version
+// The tag could be case-sensitive in Sanity
+const posts = await getPostsByTag(originalTag)
+
+// Log the posts we got back
+console.log(`Retrieved ${posts.length} posts for tag: ${originalTag}`)
+
+
+// Transform Sanity posts to match the existing format
+const transformedPosts = posts.map((post: BlogPost) => ({
+	id: post.slug.current,
+	data: {
+		title: post.title,
+		description: post.description,
+		pubDate: new Date(post.pubDate),
+		author: post.author,
+		image: post.image,
+		tags: post.tags || []
+	}
+}))
+
+// Content
+// - SEO
+const SEO = {
+	title: `Foxi | posts tagged as ${tag}`,
+	description:
+		"Explore Foxi's latest news designed to enhance productivity, ensure top-notch security, and integrate seamlessly with your favorite tools. Join thousands of satisfied users and transform your workflow with Foxi today!"
+}
+
+// - Page Header
+const header = {
+	title: `Foxi posts about <br><strong>${originalTag}</strong>`,
+	text: `Stay informed, stay productive with all the latest from Foxi.`
+}
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={header.title} text={header.text} />
+	<BlogPosts data={transformedPosts} />
+</Layout>

@@ -1,0 +1,55 @@
+---
+// Blog Post Page
+// ------------
+// Description: The blog post page.
+
+// Components
+// - Layout
+import Layout from '../../layouts/PostLayout.astro'
+import PortableText from '../../components/ui/PortableText.astro'
+
+// Data
+import { getAllBlogPosts, getBlogPostBySlug, urlFor } from '../../lib/sanity'
+
+// Define types for the blog post data
+interface BlogPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  description: string;
+  pubDate: string;
+  author: string;
+  image: any;
+  tags?: string[];
+  content?: any;
+}
+
+export async function getStaticPaths() {
+	const blogPosts = await getAllBlogPosts()
+	return blogPosts.map((post: BlogPost) => ({
+		params: { slug: post.slug.current },
+		props: { slug: post.slug.current }
+	}))
+}
+
+const { slug } = Astro.params
+const post = await getBlogPostBySlug(slug)
+
+if (!post) {
+	return Astro.redirect('/404')
+}
+
+// Format the post data to match the existing layout expectations
+const formattedPost = {
+	title: post.title,
+	description: post.description,
+	pubDate: new Date(post.pubDate),
+	author: post.author,
+	image: urlFor(post.image).url(),
+	tags: post.tags || []
+}
+---
+
+<Layout frontmatter={formattedPost}>
+	<PortableText content={post.content} />
+</Layout>

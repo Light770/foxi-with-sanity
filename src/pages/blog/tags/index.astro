@@ -1,0 +1,58 @@
+---
+// Blog Tags Page
+// ------------
+// Description: The blog tags page.
+
+// Components
+// - Layout
+import Layout from '../../../layouts/Layout.astro'
+// - UI
+import Hero from '../../../components/blocks/hero/PageHeader.astro'
+import Section from '../../../components/ui/Section.astro'
+import Row from '../../../components/ui/Row.astro'
+import Col from '../../../components/ui/Col.astro'
+import Button from '../../../components/ui/Button.astro'
+
+// Data - Now from Sanity
+import { getAllTags } from '../../../lib/sanity'
+
+// Get all unique tags from Sanity
+const tags = await getAllTags() as string[]
+
+// Sort tags alphabetically
+const sortedTags = tags.sort((a: string, b: string) => a.localeCompare(b))
+
+// Content
+// - SEO
+const SEO = {
+	title: 'Foxi | Browse by Tags',
+	description: 'Browse all blog posts by tags'
+}
+
+// - Page Header
+const header = {
+	title: 'Browse by <strong>Tags</strong>',
+	text: 'Find posts organized by topic'
+}
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={header.title} text={header.text} />
+	<Section>
+		<Row>
+			<Col span="12">
+				<div class="flex flex-wrap gap-4 justify-center">
+					{sortedTags.map((tag) => (
+						<Button
+							link={`/blog/tags/${tag.toLowerCase()}`}
+							style="secondary"
+							size="sm"
+						>
+							{tag}
+						</Button>
+					))}
+				</div>
+			</Col>
+		</Row>
+	</Section>
+</Layout>

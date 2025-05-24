@@ -7,7 +7,7 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://foxi.netlify.app/",
+  site: "https://gentle-lolly-afc5f6.netlify.app/",
   integrations: [
     tailwind(),
     icon(),

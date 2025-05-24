@@ -6,7 +6,7 @@ export const sanityClient = createClient({
   projectId: import.meta.env.SANITY_PROJECT_ID || 'n6se1tqp',
   dataset: import.meta.env.SANITY_DATASET || 'production',
   apiVersion: '2024-01-01', // Use current date
-  useCdn: false, // set to false for fresh data
+  useCdn: true, // set to false for fresh data
 })
 
 // Helper to generate image URLs

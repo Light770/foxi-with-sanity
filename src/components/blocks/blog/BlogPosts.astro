@@ -25,17 +25,6 @@ const { data: posts } = Astro.props
 // 	return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
 // })
 
-// Default SEO for section (if not provided by parent)
-const SEO = {
-	title: 'Blog Posts',
-	description: 'Latest posts from our blog'
-}
-
-// <Layout title={SEO.title} description={SEO.description}>
-// 	<Hero title={header.title} text={header.text} />
-// 	<BlogPosts data={transformedPosts} />
-// </Layout>
-
 ---
 
 <Section>

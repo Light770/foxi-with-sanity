@@ -2,22 +2,35 @@
 <script>
 	document.addEventListener('astro:page-load', () => {
 		const pricingTypeCheckbox = document.getElementById('pricingType')
-		const montlyLabel = document.getElementById('monthlyLabel')
+		const monthlyLabel = document.getElementById('monthlyLabel')
 		const annualyLabel = document.getElementById('annualLabel')
-		const plans = ['plan-0', 'plan-1', 'plan-2']
+		// Dynamically find all pricing plan elements
+		const plans = Array.from(document.querySelectorAll('[id^="plan-"]')).map(el => el.id)
+		console.log('Pricing plans found:', plans)
+		
 		if (pricingTypeCheckbox) {
 			pricingTypeCheckbox.addEventListener('change', function () {
-				plans.forEach((plan) => {
-					const planElement = document.getElementById(plan)
+				console.log('Pricing toggle changed, switching between monthly/annual')
+				plans.forEach((planId) => {
+					const planElement = document.getElementById(planId)
 
-					if (planElement && montlyLabel && annualyLabel) {
+					if (planElement && monthlyLabel && annualyLabel) {
 						planElement.classList.toggle('pricing--annualy')
 						planElement.classList.toggle('pricing--monthly')
-						montlyLabel.classList.toggle('text-primary-500')
+						monthlyLabel.classList.toggle('text-primary-500')
 						annualyLabel.classList.toggle('text-primary-500')
+						console.log(`Toggled classes for ${planId}`)
+					} else {
+						console.warn(`Missing elements for ${planId}:`, {
+							planElement: !!planElement,
+							monthlyLabel: !!monthlyLabel,
+							annualyLabel: !!annualyLabel
+						})
 					}
 				})
 			})
+		} else {
+			console.error('Pricing type checkbox not found')
 		}
 	})
 </script>

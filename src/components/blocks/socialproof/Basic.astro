@@ -49,23 +49,38 @@ const images = [
 // Props
 type Props = {
 	classes?: string
+	data?: any
 }
-const { classes } = Astro.props
+const { classes, data } = Astro.props
+
+// Content with Sanity data or defaults
+const socialProofContent = {
+	businessCount: data?.businessCount || '50,000+',
+	trustText: data?.trustText || 'Trusted by',
+	logos: data?.logos || images
+}
 ---
 
 <Section padding="bottom" classes={classes}>
 	<Row>
 		<Col span="12" align="center">
 			<h2 class="!mb-6 text-base font-normal text-neutral-400 dark:text-neutral-600">
-				Trusted by <strong class="highlight">50,000+</strong> businesses
+				{socialProofContent.trustText} <strong class="highlight">{socialProofContent.businessCount}</strong> businesses
 			</h2></Col
 		>
 	</Row>
 	<Row flex classes="!flex-row">
 		{
-			images.map((item) => (
+			socialProofContent.logos.map((item: any) => (
 				<Col>
-					<Image src={item.image} alt={item.alt} />
+					{item.image && (
+						<Image
+							src={item.imageUrl || item.image}
+							alt={item.alt || 'Company logo'}
+							width={120}
+							height={60}
+						/>
+					)}
 				</Col>
 			))
 		}

@@ -2,12 +2,15 @@ import { createClient } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 
 // Initialize Sanity client
-export const sanityClient = createClient({
-  projectId: import.meta.env.SANITY_PROJECT_ID || 'n6se1tqp',
-  dataset: import.meta.env.SANITY_DATASET || 'production',
+const sanityClient = createClient({
+  projectId: import.meta.env.SANITY_PROJECT_ID || 'hg0e82hx',
+  dataset: import.meta.env.SANITY_DATASET || 'private-config',
+  token: import.meta.env.SANITY_TOKEN, // Required for private datasets
   apiVersion: '2024-01-01', // Use current date
-  useCdn: true, // set to false for fresh data
+  useCdn: false, // Set to false for private datasets with tokens
 })
+
+export { sanityClient as getClient }
 
 // Helper to generate image URLs
 const builder = imageUrlBuilder(sanityClient)
@@ -29,7 +32,13 @@ export async function getAllBlogPosts() {
     tags
   }`
 
-  return await sanityClient.fetch(query)
+  const posts = await sanityClient.fetch(query)
+  
+  // Handle posts without images by providing a fallback
+  return posts.map((post: any) => ({
+    ...post,
+    image: post.image || '/blog/post-01-cover.png' // Fallback to existing asset
+  }))
 }
 
 // Fetch single blog post by slug
@@ -46,7 +55,15 @@ export async function getBlogPostBySlug(slug: string) {
     content
   }`
 
-  return await sanityClient.fetch(query, { slug })
+  const post = await sanityClient.fetch(query, { slug })
+  
+  if (!post) return null
+  
+  // Handle missing image
+  return {
+    ...post,
+    image: post.image || { asset: { url: '/blog/post-01-cover.png' } }
+  }
 }
 
 // Get all unique tags
@@ -90,6 +107,48 @@ export async function getAllFeatures() {
   }`
   
   return await sanityClient.fetch(query)
+}
+
+// Fetch features by category
+export async function getFeaturesByCategory(category: string) {
+  const query = `*[_type == "feature" && category == $category] | order(order asc) {
+    _id,
+    title,
+    icon,
+    description,
+    category,
+    order
+  }`
+  
+  return await sanityClient.fetch(query, { category })
+}
+
+// Fetch all feature cards
+export async function getAllFeatureCards() {
+  const query = `*[_type == "featureCard"] | order(category asc, order asc) {
+    _id,
+    title,
+    image,
+    description,
+    category,
+    order
+  }`
+  
+  return await sanityClient.fetch(query)
+}
+
+// Fetch feature cards by category
+export async function getFeatureCardsByCategory(category: string) {
+  const query = `*[_type == "featureCard" && category == $category] | order(order asc) {
+    _id,
+    title,
+    image,
+    description,
+    category,
+    order
+  }`
+  
+  return await sanityClient.fetch(query, { category })
 }
 
 // Fetch all FAQs
@@ -138,6 +197,86 @@ export async function getPricingPlans() {
   }`
   
   return await sanityClient.fetch(query)
+}
+
+// Fetch feature list configuration and features
+export async function getFeatureListData(featureListId?: string) {
+  if (!featureListId) {
+    // Return default configuration if no specific featureList is provided
+    const features = await getAllFeatures()
+    return {
+      title: 'Whats included on all foxi plans',
+      description: 'Explore the suite of tools designed to streamline your workflow, enhance productivity, and drive growth. Each product is crafted with precision to meet your needs and exceed your expectations.',
+      features: features.slice(0, 8),
+      layout: '3',
+      alignment: 'left'
+    }
+  }
+
+  // Fetch specific featureList configuration
+  const query = `*[_type == "featureList" && _id == $featureListId][0] {
+    _id,
+    title,
+    description,
+    featuresSelection,
+    category,
+    "selectedFeatures": selectedFeatures[]->{
+      _id,
+      title,
+      icon,
+      description,
+      category,
+      order
+    },
+    maxFeatures,
+    layout,
+    alignment
+  }`
+
+  const featureListConfig = await sanityClient.fetch(query, { featureListId })
+  
+  if (!featureListConfig) {
+    // Fallback to default if featureList not found
+    const features = await getAllFeatures()
+    return {
+      title: 'Whats included on all foxi plans',
+      description: 'Explore the suite of tools designed to streamline your workflow, enhance productivity, and drive growth. Each product is crafted with precision to meet your needs and exceed your expectations.',
+      features: features.slice(0, 8),
+      layout: '3',
+      alignment: 'left'
+    }
+  }
+
+  let features = []
+
+  switch (featureListConfig.featuresSelection) {
+    case 'manual':
+      features = featureListConfig.selectedFeatures || []
+      break
+    case 'category':
+      if (featureListConfig.category) {
+        features = await getFeaturesByCategory(featureListConfig.category)
+      } else {
+        features = await getAllFeatures()
+      }
+      break
+    case 'all':
+    default:
+      features = await getAllFeatures()
+      break
+  }
+
+  // Apply maxFeatures limit
+  const maxFeatures = featureListConfig.maxFeatures || 8
+  features = features.slice(0, maxFeatures)
+
+  return {
+    title: featureListConfig.title,
+    description: featureListConfig.description,
+    features,
+    layout: featureListConfig.layout || '3',
+    alignment: featureListConfig.alignment || 'left'
+  }
 }
 
 // Fetch testimonials
@@ -223,4 +362,262 @@ export async function getPageContent(page: string) {
   }`
 
   return await sanityClient.fetch(query, { page })
+}
+
+// Fetch social proof data
+export async function getSocialProof() {
+  const query = `*[_type == "socialProof"][0] {
+    _id,
+    trustText,
+    businessCount,
+    logos[] {
+      platform,
+      "imageUrl": logo.asset->url,
+      alt
+    }
+  }`
+
+  return await sanityClient.fetch(query)
+}
+
+// Fetch social proof data
+export async function getFeaturesData() {
+  const query = `*[_type == "deaturesData"][0] {
+    _id,
+    trustText,
+    businessCount,
+    logos[] {
+      platform,
+      "imageUrl": logo.asset->url,
+      alt
+    }
+  }`
+
+  return await sanityClient.fetch(query)
+}
+
+// Fetch FAQ page content
+export async function getFAQPage() {
+  const query = `*[_type == "faqPage"][0] {
+    _id,
+    seo,
+    header,
+    faqSections[] {
+      title,
+      text,
+      category,
+      backgroundColor,
+      order
+    },
+    textImageSections[] {
+      title,
+      text,
+      "image": image.asset->url,
+      "mobileImage": mobileImage.asset->url,
+      imagePosition,
+      offsetImage,
+      backgroundColor,
+      order
+    },
+    cta->{
+      _id,
+      title,
+      text,
+      buttonText,
+      buttonLink,
+      notificationText,
+      badgeText,
+      "backgroundImage": backgroundImage.asset->url,
+      theme,
+      page
+    }
+  }`
+
+  return await sanityClient.fetch(query)
+}
+
+// Fetch FAQs by category
+export async function getFAQsByCategory(category: string) {
+  const query = `*[_type == "faq" && category == $category] | order(order asc) {
+    _id,
+    question,
+    reply,
+    category,
+    open,
+    order
+  }`
+  
+  return await sanityClient.fetch(query, { category })
+}
+
+// Fetch home page content
+export async function getHomePage() {
+  const query = `*[_type == "home"][0] {
+    _id,
+    seo,
+    hero->{
+      _id,
+      title,
+      subtitle,
+      ctaText,
+      ctaLink,
+      "image": image.asset->url,
+      badge,
+      socialProof,
+      page
+    },
+    socialProof->{
+      _id,
+      trustText,
+      businessCount,
+      logos[] {
+        platform,
+        "imageUrl": logo.asset->url,
+        alt
+      }
+    },
+    featuredTestimonial->{
+      _id,
+      quote,
+      author,
+      role,
+      company,
+      "avatar": avatar.asset->url,
+      rating,
+      featured,
+      order
+    },
+    "testimonialBackground": testimonialBackground.asset->url,
+    testimonialBackgroundPosition,
+    highlightBlocks[] {
+      heading,
+      text,
+      "image": image.asset->url,
+      "mobileImage": mobileImage.asset->url,
+      order
+    },
+    featureCardHeader {
+      title,
+      text
+    },
+    featureCardData[]->{
+      _id,
+      title,
+      image,
+      description,
+      category,
+      order
+    },
+    cta->{
+      _id,
+      title,
+      text,
+      buttonText,
+      buttonLink,
+      notificationText,
+      badgeText,
+      "backgroundImage": backgroundImage.asset->url,
+      theme,
+      page
+    }
+  }`
+
+  return await sanityClient.fetch(query)
+}
+
+// Fetch features page content
+export async function getFeaturesPage() {
+  const query = `*[_type == "featuresPage"][0] {
+    _id,
+    seo,
+    header,
+    featureSections[] {
+      title,
+      text,
+      category,
+      backgroundColor,
+      order
+    },
+    cta->{
+      _id,
+      title,
+      text,
+      buttonText,
+      buttonLink,
+      notificationText,
+      badgeText,
+      "backgroundImage": backgroundImage.asset->url,
+      theme,
+      page
+    }
+  }`
+
+  return await sanityClient.fetch(query)
+}
+
+// Fetch pricing page content
+export async function getPricingPage() {
+  const query = `*[_type == "pricingPage"][0] {
+    _id,
+    seo,
+    header,
+    socialProof->{
+      _id,
+      trustText,
+      businessCount,
+      logos[] {
+        platform,
+        "imageUrl": logo.asset->url,
+        alt
+      }
+    },
+    showFeatures,
+    featureList->{
+      _id,
+      title,
+      description,
+      featuresSelection,
+      category,
+      "selectedFeatures": selectedFeatures[]->{
+        _id,
+        title,
+        icon,
+        description,
+        category,
+        order
+      },
+      maxFeatures,
+      layout,
+      alignment
+    },
+    featuredTestimonial->{
+      _id,
+      quote,
+      author,
+      role,
+      company,
+      "avatar": avatar.asset->url,
+      rating,
+      featured,
+      order
+    },
+    "testimonialBackground": testimonialBackground.asset->url,
+    testimonialBackgroundPosition,
+    showFAQ,
+    faqBackgroundClass,
+    cta->{
+      _id,
+      title,
+      text,
+      buttonText,
+      buttonLink,
+      notificationText,
+      badgeText,
+      "backgroundImage": backgroundImage.asset->url,
+      theme,
+      page
+    }
+  }`
+
+  return await sanityClient.fetch(query)
 }

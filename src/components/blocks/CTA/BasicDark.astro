@@ -15,9 +15,25 @@ import ChipNotification from '../../ui/ChipNotification.astro'
 import { Image } from 'astro:assets'
 import Highlight from '../../ui/Highlight.astro'
 
-// Content
+// Props
+type Props = {
+	data?: any
+}
+const { data } = Astro.props
+
+// Content - use data from props or fallback to defaults
 import ctaImage from '../../../assets/cta-dark-bg.webp'
 import badge from '../../../assets/badge.svg'
+
+const ctaContent = {
+	title: data?.title || 'Join Over 30,000 Satisfied Users!',
+	text: data?.text || 'Discover why thousands of professionals trust our platform to streamline their workflow and enhance productivity. Get started today and see the difference for yourself!',
+	buttonText: data?.buttonText || 'Get started now!',
+	buttonLink: data?.buttonLink || '/',
+	notificationText: data?.notificationText || '#1 Product of the Year,',
+	backgroundImage: data?.backgroundImage || ctaImage,
+	badgeText: data?.badgeText || 'Product Hunt'
+}
 ---
 
 <Section>
@@ -25,17 +41,17 @@ import badge from '../../../assets/badge.svg'
 		<Col span="1" />
 		<Col span="10">
 			<CTA
-				title="Join Over 30,000 Satisfied Users!"
-				text="Discover why thousands of professionals trust our platform to streamline their workflow and enhance productivity. Get started today and see the difference for yourself!"
+				title={ctaContent.title}
+				text={ctaContent.text}
 				mode="dark"
-				bg={ctaImage}
+				bg={ctaContent.backgroundImage}
 			>
 				<ChipNotification radius="rounded-full" classes="mb-6 box">
 					<Image src={badge} alt="Product of the Year" class="h-12 w-12" slot="button" />
-					<span class="hidden md:block">#1 Product of the Year,</span>
-					<Highlight classes="md:ml-2"> Product Hunt </Highlight>
+					<span class="hidden md:block">{ctaContent.notificationText}</span>
+					<Highlight classes="md:ml-2"> {ctaContent.badgeText} </Highlight>
 				</ChipNotification>
-				<Button size="lg" style="primary"> Get started now! </Button>
+				<Button size="lg" style="primary" link={ctaContent.buttonLink}> {ctaContent.buttonText} </Button>
 			</CTA>
 		</Col>
 		<Col span="1" />

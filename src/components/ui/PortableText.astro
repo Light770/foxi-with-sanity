@@ -23,7 +23,7 @@ const components = {
     number: ({ children }: { children: string }) => `<li class="mb-2">${children}</li>`,
   },
   marks: {
-    strong: ({ children }: { children: string }) => `<strong class="font-bold">${children}</strong>`,
+    strong: ({ children }: { children: string }) => `<strong>${children}</strong>`,
     em: ({ children }: { children: string }) => `<em class="italic">${children}</em>`,
     code: ({ children }: { children: string }) => `<code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">${children}</code>`,
     link: ({ value, children }: { value: { href?: string }, children: string }) => `<a href="${value?.href}" class="text-primary-600 hover:underline" target="_blank" rel="noopener noreferrer">${children}</a>`,

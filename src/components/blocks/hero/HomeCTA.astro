@@ -14,18 +14,35 @@ import { Image } from 'astro:assets'
 import Button from '../../ui/Button.astro'
 import AvatarGroup from '../../ui/AvatarGroup.astro'
 
-// Content
+// Props
+type Props = {
+	data?: any
+}
+const { data } = Astro.props
+
+// Content - use data from props or fallback to defaults
 // - Hero Image
 import heroImage from '../../../assets/hero-01.png'
 // - Avatars
 import user1 from '../../../assets/avatars/avatar-01.webp'
 import user2 from '../../../assets/avatars/avatar-02.webp'
 import user3 from '../../../assets/avatars/avatar-03.webp'
-const avatars = [
+const defaultAvatars = [
 	{ image: { src: user1.src, alt: 'user name' }, link: '/' },
 	{ image: { src: user2.src, alt: 'user name' }, link: '/' },
 	{ image: { src: user3.src, alt: 'user name' }, link: '/' }
 ]
+
+// Hero content with Sanity data or defaults
+const heroContent = {
+	customerCount: data?.customerCount || '30K+',
+	title: data?.title || 'Enhance team <strong>performance</strong> with seamless integration',
+	subtitle: data?.subtitle || 'Work smarter, not harder, with our innovative platform',
+	buttonText: data?.ctaText || data?.buttonText || 'Get started for free',
+	buttonLink: data?.ctaLink || data?.buttonLink || '/',
+	avatars: data?.avatars || defaultAvatars,
+	heroImage: data?.image || data?.heroImage || heroImage
+}
 ---
 
 <Section id="intro" padding="top" classes="bg-neutral-50 dark:bg-neutral-900">
@@ -33,23 +50,27 @@ const avatars = [
 		<Col span="2" />
 		<Col span="8" align="center">
 			<ChipNotification radius="rounded-full" classes="mb-6">
-				<strong>30K+</strong> satisfied customers
-				<AvatarGroup avatars={avatars} radius="rounded-full" slot="button" />
+				<strong>{heroContent.customerCount}</strong> satisfied customers
+				<AvatarGroup avatars={heroContent.avatars} radius="rounded-full" slot="button" />
 			</ChipNotification>
-			<h1>Enhance team <strong>performance</strong> with seamless integration</h1>
+			<h1 set:html={heroContent.title}></h1>
 
-			<p class="pb-0 text-lg">Work smarter, not harder, with our innovative platform</p>
-			<Button size="lg" link="/">Get started for free</Button>
+			<p class="pb-0 text-lg">{heroContent.subtitle}</p>
+			<Button size="lg" link={heroContent.buttonLink}>{heroContent.buttonText}</Button>
 		</Col>
 		<Col span="2" />
 		<Col span="2" />
 		<Col span="8">
-			<Image
-				src={heroImage}
-				alt="Foxi. The tailwind astro theme"
-				class="translate-y-8 shadow-2xl shadow-neutral-200 dark:shadow-neutral-950"
-				format="webp"
-			/></Col
+			{heroContent.heroImage && (
+				<Image
+					src={heroContent.heroImage}
+					alt="Foxi. The tailwind astro theme"
+					class="translate-y-8 shadow-2xl shadow-neutral-200 dark:shadow-neutral-950"
+					format="webp"
+					width={800}
+					height={600}
+				/>
+			)}</Col
 		>
 		<Col span="2" />
 	</Row>

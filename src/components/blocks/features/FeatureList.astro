@@ -1,7 +1,7 @@
 ---
 // Feature List Section
 // ------------
-// Description: A list of features with icons and descriptions in a 4 column layout.
+// Description: A list of features with icons and descriptions in a configurable layout.
 
 // Components
 // - Layout
@@ -11,30 +11,77 @@ import Col from '../../ui/Col.astro'
 // - UI
 import Feature from '../../ui/Feature.astro'
 
-// Data
-import features from '../../../data/json-files/featuresData.json'
+// Props
+type Props = {
+	data?: {
+		title: string
+		description: string
+		features: Array<{
+			_id: string
+			title: string
+			icon: string
+			description: string
+			category: string
+			order?: number
+		}>
+		layout: string
+		alignment: string
+	}
+}
+
+const { data } = Astro.props
+
+// Fallback data if no Sanity data is provided
+const defaultData = {
+	title: 'Whats included on <strong>all</strong> foxi plans',
+	description: 'Explore the suite of tools designed to streamline your workflow, enhance productivity, and drive growth. Each product is crafted with precision to meet your needs and exceed your expectations.',
+	features: [],
+	layout: '3',
+	alignment: 'left'
+}
+
+const featureData = data || defaultData
+const colSpan = featureData.layout || '3'
 ---
 
 <Section id="features">
 	<Row>
 		<Col span="12" align="center" classes="mb-12 max-w-4xl mx-auto">
-			<h2 class="text-pretty">Whats included on <strong>all</strong> foxi plans</h2>
+			<h2 class="text-pretty" set:html={featureData.title} />
 			<p class="pb-0 text-lg">
-				Explore the suite of tools designed to streamline your workflow, enhance productivity, and
-				drive growth. Each product is crafted with precision to meet your needs and exceed your
-				expectations.
+				{featureData.description}
 			</p>
 		</Col>
 	</Row>
-	<Row>
-		{
-			features.slice(0, 8).map((feature) => (
-				<Col span="3">
-					<Feature title={feature.title} icon={feature.icon} align="left" classes="mb-12">
-						{feature.description}
-					</Feature>
-				</Col>
-			))
-		}
-	</Row>
+	{featureData.features.length > 0 ? (
+		<Row>
+			{
+				featureData.features.map((feature) => (
+					<Col span={colSpan}>
+						<Feature
+							title={feature.title}
+							icon={feature.icon}
+							align={featureData.alignment as 'left' | 'center'}
+							classes="mb-12"
+						>
+							{feature.description}
+						</Feature>
+					</Col>
+				))
+			}
+		</Row>
+	) : (
+		<Row>
+			<Col span="12" align="center" classes="py-16">
+				<div class="text-center">
+					<h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-200 mb-4">
+						No features available
+					</h3>
+					<p class="text-neutral-600 dark:text-neutral-400">
+						Please configure features in Sanity Studio or contact support.
+					</p>
+				</div>
+			</Col>
+		</Row>
+	)}
 </Section>

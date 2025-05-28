@@ -25,17 +25,33 @@ interface BlogPost {
 }
 
 export async function getStaticPaths() {
-	const blogPosts = await getAllBlogPosts()
-	return blogPosts.map((post: BlogPost) => ({
-		params: { slug: post.slug.current },
-		props: { slug: post.slug.current }
-	}))
+	try {
+		const blogPosts = await getAllBlogPosts()
+		console.log('Static paths for blog posts:', blogPosts?.length || 0)
+		
+		if (!blogPosts || blogPosts.length === 0) {
+			console.warn('No blog posts found in Sanity')
+			return []
+		}
+		
+		return blogPosts.map((post: BlogPost) => ({
+			params: { slug: post.slug.current },
+			props: { slug: post.slug.current }
+		}))
+	} catch (error) {
+		console.error('Error fetching blog posts for static paths:', error)
+		return []
+	}
 }
 
 const { slug } = Astro.params
+console.log('Fetching blog post for slug:', slug)
+
 const post = await getBlogPostBySlug(slug)
+console.log('Blog post found:', !!post)
 
 if (!post) {
+	console.warn('Blog post not found for slug:', slug)
 	return Astro.redirect('/404')
 }
 

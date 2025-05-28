@@ -4,26 +4,85 @@
 import Layout from '../layouts/Layout.astro'
 // - UI
 import Hero from '../components/blocks/hero/HomeCTA.astro'
-import Features from '../components/blocks/features/FeatureCards.astro'
+import FeatureCardsSection from '../components/blocks/features/FeatureCards.astro'
 import Testimonial from '../components/blocks/testimonials/BasicDark.astro'
 import HighlightBlocks from '../components/blocks/highlights/HightlightRows.astro'
 import CTA from '../components/blocks/CTA/BasicDark.astro'
 
-// Content
-// - Testimonial background
-import testimonialBackground from '../assets/testimonial-bg-01.webp'
-// - SEO
-const SEO = {
+// Data - Fully from Sanity
+import { getHomePage, getTestimonials, getAllFeatureCards } from '../lib/sanity'
+import type { HomePage, HighlightBlock } from '../lib/sanity/types'
+
+// Fetch complete home page data from Sanity
+const homePageData: HomePage | null = await getHomePage()
+
+// Fallback data if Sanity data is not available
+const defaultSEO = {
 	title: 'Foxi | Your Productivity Toolkit',
-	description:
-		'Foxi is a powerful productivity toolkit designed to enhance your workflow and boost your productivity. With features like analytics, security, and integrations, Foxi is the perfect solution for your business.'
+	description: 'Foxi is a powerful productivity toolkit designed to enhance your workflow and boost your productivity. With features like analytics, security, and integrations, Foxi is the perfect solution for your business.'
 }
+
+// Extract data with fallbacks
+const SEO = homePageData?.seo || defaultSEO
+const heroData = homePageData?.hero
+let featureCardData = homePageData?.featureCardData
+
+// Fallback to all feature cards if no specific ones are selected
+if (!featureCardData || featureCardData.length === 0) {
+	const allFeatureCards = await getAllFeatureCards()
+	featureCardData = allFeatureCards.slice(0, 5) // Limit to 5 cards for the layout
+}
+
+// Feature card header data with fallback
+const featureCardHeader = homePageData?.featureCardHeader || {
+	title: [
+		{
+			_type: 'block',
+			children: [
+				{
+					_type: 'span',
+					text: 'Innovative tools to transform your workflow'
+				}
+			]
+		}
+	],
+	text: 'Explore the suite of tools designed to streamline your workflow, enhance productivity, and drive growth. Each product is crafted with precision to meet your needs and exceed your expectations.'
+}
+
+const ctaData = homePageData?.cta
+const highlightBlocks = homePageData?.highlightBlocks || []
+
+// Handle testimonial data
+let featuredTestimonial = homePageData?.featuredTestimonial
+if (!featuredTestimonial) {
+	// Fallback to getting testimonials and finding a featured one
+	const testimonials = await getTestimonials()
+	featuredTestimonial = testimonials?.find((t: any) => t.featured) || testimonials?.[0]
+}
+
+// Testimonial background
+const testimonialBackground = homePageData?.testimonialBackground
+const testimonialBackgroundPosition = homePageData?.testimonialBackgroundPosition || 'right'
+
+// Fallback background image
+import defaultTestimonialBackground from '../assets/testimonial-bg-01.webp'
+const finalTestimonialBackground = testimonialBackground || defaultTestimonialBackground
+
+// Sort highlight blocks by order
+const sortedHighlightBlocks: HighlightBlock[] = highlightBlocks.sort((a: HighlightBlock, b: HighlightBlock) => (a.order || 0) - (b.order || 0))
+
 ---
 
 <Layout title={SEO.title} description={SEO.description}>
-	<Hero />
-	<Features />
-	<Testimonial bg={testimonialBackground} bgPosition="right" />
-	<HighlightBlocks />
-	<CTA />
+	<Hero data={heroData} />
+	<FeatureCardsSection data={featureCardData} header={featureCardHeader} />
+	<Testimonial
+		blockquote={featuredTestimonial?.quote}
+		figcaption={featuredTestimonial?.author}
+		cite={featuredTestimonial?.role && featuredTestimonial?.company ? `${featuredTestimonial.role}, ${featuredTestimonial.company}` : featuredTestimonial?.company || featuredTestimonial?.role}
+		bg={finalTestimonialBackground}
+		bgPosition={testimonialBackgroundPosition}
+	/>
+	<HighlightBlocks data={sortedHighlightBlocks} />
+	<CTA data={ctaData} />
 </Layout>

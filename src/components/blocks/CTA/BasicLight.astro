@@ -12,6 +12,22 @@ import Col from '../../ui/Col.astro'
 import CTA from '../../ui/CTA.astro'
 import Button from '../../ui/Button.astro'
 import Ratings from '../../ui/Rating.astro'
+
+// Props
+type Props = {
+	data?: any
+}
+const { data } = Astro.props
+
+// Content - use data from props or fallback to defaults
+const ctaContent = {
+	title: data?.title || 'Join the Foxi Revolution!',
+	text: data?.text || 'Discover why thousands of professionals trust our platform to streamline their workflow and enhance productivity. Get started today and see the difference for yourself!',
+	buttonText: data?.buttonText || 'Get started now!',
+	buttonLink: data?.buttonLink || '/',
+	rating: data?.rating || 5,
+	ratingText: data?.ratingText || '30K customer ratings'
+}
 ---
 
 <Section>
@@ -19,12 +35,12 @@ import Ratings from '../../ui/Rating.astro'
 		<Col span="1" />
 		<Col span="10">
 			<CTA
-				title="Join the Foxi Revolution!"
-				text="Discover why thousands of professionals trust our platform to streamline their workflow and enhance productivity. Get started today and see the difference for yourself!"
+				title={ctaContent.title}
+				text={ctaContent.text}
 				classes="!shadow-none"
 			>
-				<Ratings rating={5} text="30K customer ratings" classes="mb-4" />
-				<Button size="lg" style="primary"> Get started now! </Button>
+				<Ratings rating={ctaContent.rating} text={ctaContent.ratingText} classes="mb-4" />
+				<Button size="lg" style="primary" link={ctaContent.buttonLink}> {ctaContent.buttonText} </Button>
 			</CTA>
 		</Col>
 		<Col span="1" />

@@ -1,0 +1,48 @@
+{
+  "header": {
+    "title": "Innovative tools to <strong>transform</strong> your workflow",
+    "text": "Explore the suite of tools designed to streamline your workflow, enhance productivity, and drive growth. Each product is crafted with precision to meet your needs and exceed your expectations."
+  },
+  "cards": [
+    {
+      "_id": "feature-card-1",
+      "title": "Advanced Analytics Dashboard",
+      "description": "Get comprehensive insights into your business performance with real-time analytics, custom reports, and interactive visualizations that help you make data-driven decisions.",
+      "icon": "chart-pie",
+      "category": "Analytics",
+      "order": 1
+    },
+    {
+      "_id": "feature-card-2",
+      "title": "Smart Project Management",
+      "description": "Streamline your workflow with intelligent task assignment, deadline tracking, and collaborative tools that keep your team synchronized and productive.",
+      "icon": "clipboard-document-list",
+      "category": "Productivity",
+      "order": 2
+    },
+    {
+      "_id": "feature-card-3",
+      "title": "Real-time Team Communication",
+      "description": "Stay connected with your team through integrated chat, video calls, and file sharing in a secure environment designed for seamless collaboration.",
+      "icon": "chat-bubble-left-right",
+      "category": "Support",
+      "order": 3
+    },
+    {
+      "_id": "feature-card-4",
+      "title": "Customer Relationship Management",
+      "description": "Build stronger customer relationships with our comprehensive CRM system featuring contact management, sales tracking, and automated follow-ups.",
+      "icon": "user-group",
+      "category": "Support",
+      "order": 4
+    },
+    {
+      "_id": "feature-card-5",
+      "title": "Automated Financial Operations",
+      "description": "Simplify your financial processes with automated invoicing, expense tracking, payment processing, and comprehensive financial reporting tools.",
+      "icon": "credit-card",
+      "category": "Productivity",
+      "order": 5
+    }
+  ]
+}

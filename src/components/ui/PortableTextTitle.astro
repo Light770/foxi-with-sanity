@@ -1,0 +1,22 @@
+---
+import { toHTML } from '@portabletext/to-html'
+
+const { content } = Astro.props
+
+// Define custom serializers for PortableText titles (no prose styling)
+const components = {
+  block: {
+    normal: ({ children }: { children: string }) => children, // Remove <p> wrapper for titles
+  },
+  marks: {
+    strong: ({ children }: { children: string }) => `<strong>${children}</strong>`,
+    em: ({ children }: { children: string }) => `<em class="italic">${children}</em>`,
+  },
+}
+
+// Convert Portable Text to HTML
+const html = toHTML(content, { components } as any)
+---
+
+<!-- No prose classes - let the parent heading element handle styling -->
+<span set:html={html} />

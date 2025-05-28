@@ -12,12 +12,6 @@ import Col from '../../ui/Col.astro'
 import PricingTable from '../../ui/pricing-tables/PricingTable.astro'
 import Toggle from '../../ui/forms/form-elements/Toggle.astro'
 
-// Content
-import pricingTablesData from '../../../data/json-files/pricingTablesdata.json'
-
-// Script
-import PricingChange from '../../scripts/PricingPlanChange.astro'
-
 // Props
 type PricingTableData = {
 	header: {
@@ -41,28 +35,51 @@ type PricingTableData = {
 	type: 'basic' | 'featured'
 }
 
-const pricingData: PricingTableData[] = pricingTablesData as PricingTableData[]
+type Props = {
+	data?: PricingTableData[]
+}
+
+const { data } = Astro.props
+const pricingData = data || []
+
+// Script
+import PricingChange from '../../scripts/PricingPlanChange.astro'
 ---
 
 <Section>
 	<Row>
-		<Col span="12" align="center" classes="flex items-center justify-center gap-4 mb-12">
-			<span id="monthlyLabel" class="font-semibold text-neutral-400 transition-colors"
-				>Bill monthly</span
-			>
-			<Toggle id="pricingType" label="pricing" showLabel={false} checked={true} />
-			<span
-				class="font-semibold text-neutral-400 text-primary-500 transition-colors"
-				id="annualLabel">Bill annually</span
-			>
-		</Col>
-		{
-			pricingData.map((item, key) => (
-				<Col span="4">
-					<PricingTable data={item} listType="checklist" id={`plan-${key}`} />
+		{pricingData.length > 0 ? (
+			<>
+				<Col span="12" align="center" classes="flex items-center justify-center gap-4 mb-12">
+					<span id="monthlyLabel" class="font-semibold text-neutral-400 transition-colors"
+						>Bill monthly</span
+					>
+					<Toggle id="pricingType" label="pricing" showLabel={false} checked={true} />
+					<span
+						class="font-semibold text-primary-500 transition-colors"
+						id="annualLabel">Bill annually</span
+					>
 				</Col>
-			))
-		}
+				{
+					pricingData.map((item, key) => (
+						<Col span="4">
+							<PricingTable data={item} listType="checklist" id={`plan-${key}`} />
+						</Col>
+					))
+				}
+			</>
+		) : (
+			<Col span="12" align="center" classes="py-16">
+				<div class="text-center">
+					<h3 class="text-2xl font-bold text-neutral-800 dark:text-neutral-200 mb-4">
+						No pricing plans available
+					</h3>
+					<p class="text-neutral-600 dark:text-neutral-400">
+						Please import pricing data from Sanity or contact support.
+					</p>
+				</div>
+			</Col>
+		)}
 	</Row>
 </Section>
-<PricingChange />
+{pricingData.length > 0 && <PricingChange />}

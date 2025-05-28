@@ -11,40 +11,133 @@ import Testimonial from '../components/blocks/testimonials/BasicDark.astro'
 import Feature from '../components/blocks/features/FeatureList.astro'
 import CTA from '../components/blocks/CTA/BasicDark.astro'
 
-// Content
-// - SEO
-const SEO = {
+// Data - Now from Sanity
+import { getPricingPlans, getPricingPage, getFeatureListData } from '../lib/sanity'
+import type { PricingPlan } from '../lib/sanity/types'
+
+// Fetch pricing plans and page content
+const pricingPlans = await getPricingPlans()
+const pricingPageData = await getPricingPage()
+
+// Debug logging
+console.log('Pricing plans from Sanity:', pricingPlans?.length || 0, 'plans')
+console.log('Pricing page data:', pricingPageData ? 'Found' : 'Not found')
+
+// Content - Use Sanity data if available, otherwise fallback
+const SEO = pricingPageData?.seo || {
 	title: 'Foxi | Pricing made simple',
 	description:
 		'Discover the perfect SaaS pricing plan for your business. From startups to enterprises, our scalable solutions offer unparalleled features and 24/7 support.'
 }
-// - Page Header
-const header = {
+
+const header = pricingPageData?.header || {
 	title: 'Choose the plan that works for <strong>your</strong> needs',
 	text: 'All plans come with a 30-day money-back guarantee.'
 }
-// - Testimonial data
-import testimonialBackground from '../assets/testimonial-bg-02.webp'
-const testimonialData = {
-	blockquote:
-		"Foxi isn't just an app—it's like having a mischievous yet brilliant sidekick for your business. It streamlines tasks and also cracks jokes to keep spirits high",
-	figcaption: 'Max Widgetson',
-	cite: ' CEO, Widgetify Ltd'
+
+// Transform Sanity data to match expected format - NO JSON FALLBACK
+type PricingTableData = {
+	header: {
+		title: string
+		subtitle: string
+		currency: string
+		price: string
+		priceLabel: string
+		priceMonthly?: string
+		priceLabelMonthly?: string
+		buttonName: string
+		buttonLink: string
+	}
+	body?: {
+		listItems: Array<{ listItem: string }>
+	}
+	footer?: {
+		buttonName: string
+		buttonLink: string
+	}
+	type: 'basic' | 'featured'
 }
+
+// Only use Sanity data - filter out duplicates by title and ensure proper ordering
+const uniquePricingPlans = pricingPlans ? pricingPlans.filter((plan: PricingPlan, index: number, self: PricingPlan[]) =>
+	index === self.findIndex((p: PricingPlan) => p.title === plan.title)
+).sort((a: PricingPlan, b: PricingPlan) => (a.order || 0) - (b.order || 0)) : []
+
+const transformedPricingData: PricingTableData[] = uniquePricingPlans.map((plan: PricingPlan) => ({
+	header: {
+		title: plan.title,
+		subtitle: plan.subtitle,
+		currency: plan.currency,
+		price: plan.price,
+		priceLabel: plan.priceLabel,
+		priceMonthly: plan.priceMonthly,
+		priceLabelMonthly: plan.priceLabelMonthly,
+		buttonName: plan.buttonName,
+		buttonLink: plan.buttonLink
+	},
+	body: {
+		listItems: plan.listItems || []
+	},
+	footer: {
+		buttonName: 'See all features',
+		buttonLink: '/features'
+	},
+	type: plan.isFeatured ? 'featured' : 'basic'
+}))
+
+console.log('Final pricing data:', transformedPricingData.length, 'unique plans')
+
+// Testimonial data - use Sanity data if available, otherwise fallback
+import testimonialBackground from '../assets/testimonial-bg-02.webp'
+const testimonialData = pricingPageData?.featuredTestimonial || {
+	quote: "Foxi isn't just an app—it's like having a mischievous yet brilliant sidekick for your business. It streamlines tasks and also cracks jokes to keep spirits high",
+	author: 'Max Widgetson',
+	role: 'CEO',
+	company: 'Widgetify Ltd'
+}
+
+const testimonialBg = pricingPageData?.testimonialBackground || testimonialBackground
+const testimonialBgPosition = pricingPageData?.testimonialBackgroundPosition || 'left'
+
+// Component visibility settings from Sanity
+const showFeatures = pricingPageData?.showFeatures !== false // Default to true
+const showFAQ = pricingPageData?.showFAQ !== false // Default to true
+const faqClasses = pricingPageData?.faqBackgroundClass || 'bg-slate-50 dark:bg-neutral-900/40'
+
+// Feature list data from Sanity
+const featureListData = await getFeatureListData(pricingPageData?.featureList?._id)
 ---
 
 <Layout title={SEO.title} description={SEO.description}>
 	<Hero title={header.title} text={header.text} />
-	<Price />
-	<SocialProof />
-	<Feature />
+	<Price data={transformedPricingData} />
+	
+	{/* Use Sanity social proof if available, otherwise default */}
+	{pricingPageData?.socialProof ? (
+		<SocialProof data={pricingPageData.socialProof} />
+	) : (
+		<SocialProof />
+	)}
+	
+	{/* Conditionally show features section */}
+	{showFeatures && <Feature data={featureListData} />}
+	
+	{/* Use Sanity testimonial data */}
 	<Testimonial
-		bg={testimonialBackground}
-		bgPosition="left"
-		blockquote={testimonialData.blockquote}
-		figcaption={testimonialData.figcaption}
-		cite={testimonialData.cite}
+		bg={testimonialBg}
+		bgPosition={testimonialBgPosition}
+		blockquote={testimonialData.quote}
+		figcaption={testimonialData.author}
+		cite={testimonialData.role ? `${testimonialData.role}${testimonialData.company ? `, ${testimonialData.company}` : ''}` : ''}
 	/>
-	<FAQ classes="bg-slate-50 dark:bg-neutral-900/40" />
-	<CTA />
+	
+	{/* Conditionally show FAQ section */}
+	{showFAQ && <FAQ classes={faqClasses} />}
+	
+	{/* Use Sanity CTA if available, otherwise default */}
+	{pricingPageData?.cta ? (
+		<CTA data={pricingPageData.cta} />
+	) : (
+		<CTA />
+	)}
 </Layout>

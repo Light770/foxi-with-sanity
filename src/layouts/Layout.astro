@@ -31,6 +31,7 @@ const { title, description, ogImage, noindex } = Astro.props
 <!doctype html>
 <html lang="en" class="scroll-animation mode-auto">
 	<Header title={title} description={description} ogImage={ogImage} noindex={noindex} />
+<link rel="alternate" type="application/rss+xml" title={configData.siteTitle} href="/rss.xml" />
 	<body
 		class:list={[
 			{ ['mode-' + `${configData.mode}`]: configData.mode },

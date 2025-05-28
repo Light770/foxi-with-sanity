@@ -6,8 +6,24 @@
 // Components
 // - UI
 import TextImage from '../basic/TextImage.astro'
+import { portableTextToHTML } from '../../../lib/portableTextHelpers'
 
-// Content
+// Props
+type HighlightBlockData = {
+	heading: any[] // PortableText array
+	text: string
+	image?: any
+	mobileImage?: any
+	order?: number
+}
+
+type Props = {
+	data?: HighlightBlockData[]
+}
+
+const { data } = Astro.props
+
+// Fallback content
 import highlight01 from '../../../assets/highlights/highlight-01.svg'
 import highlight01mobile from '../../../assets/highlights/highlight-01-mobile.svg'
 import highlight02 from '../../../assets/highlights/highlight-02.svg'
@@ -26,7 +42,8 @@ type HighlightBlock = {
 	imageHeight: number
 	imagePosition: 'left' | 'right'
 }
-const highlightBlocks: HighlightBlock[] = [
+
+const defaultHighlightBlocks: HighlightBlock[] = [
 	{
 		title: 'Complete Project <strong>Visibility</strong>',
 		text: 'Gain complete visibility into your projects and tasks with our comprehensive dashboard. Easily track progress, deadlines, and team performance at a glance. Our dashboard offers real-time project tracking',
@@ -64,10 +81,27 @@ const highlightBlocks: HighlightBlock[] = [
 		imagePosition: 'left'
 	}
 ]
+
+// Use Sanity data if available, otherwise use default data
+let finalHighlightBlocks: HighlightBlock[] = defaultHighlightBlocks
+
+if (data && data.length > 0) {
+	// Convert Sanity data to component format
+	finalHighlightBlocks = data.map((block, index) => ({
+		title: portableTextToHTML(block.heading),
+		text: block.text,
+		image: block.image || defaultHighlightBlocks[index % defaultHighlightBlocks.length]?.image,
+		mobileImage: block.mobileImage || defaultHighlightBlocks[index % defaultHighlightBlocks.length]?.mobileImage,
+		imageWidth: block.image?.width || defaultHighlightBlocks[index % defaultHighlightBlocks.length]?.imageWidth || 600,
+		imageHeight: block.image?.height || defaultHighlightBlocks[index % defaultHighlightBlocks.length]?.imageHeight || 400,
+		imagePosition: index % 2 === 0 ? 'right' : 'left' as 'left' | 'right'
+	}))
+}
+
 ---
 
 {
-	highlightBlocks.map((highlight, key) => (
+	finalHighlightBlocks.map((highlight: HighlightBlock, key: number) => (
 		<TextImage
 			id={`highlight-${key}`}
 			title={highlight.title}
@@ -77,7 +111,7 @@ const highlightBlocks: HighlightBlock[] = [
 			imageHeight={highlight.imageHeight}
 			mobileImage={highlight.mobileImage}
 			imagePosition={highlight.imagePosition}
-			classes={key === 0 ? '!pb-0' : key === highlightBlocks.length - 1 ? '!pt-0' : '!py-0'}
+			classes={key === 0 ? '!pb-0' : key === finalHighlightBlocks.length - 1 ? '!pt-0' : '!py-0'}
 		/>
 	))
 }

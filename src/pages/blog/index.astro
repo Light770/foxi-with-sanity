@@ -42,7 +42,7 @@ const header = {
 const allPosts = await getAllBlogPosts()
 
 // Transform Sanity posts to match the existing format
-const transformedPosts = allPosts.map((post: BlogPost) => ({
+const transformedPosts = allPosts?.map((post: BlogPost) => ({
 	id: post.slug.current,
 	data: {
 		title: post.title,
@@ -52,7 +52,9 @@ const transformedPosts = allPosts.map((post: BlogPost) => ({
 		image: post.image,
 		tags: post.tags || []
 	}
-}))
+})) || []
+
+console.log('Blog posts from Sanity:', allPosts?.length || 0, 'posts')
 ---
 
 <Layout title={SEO.title} description={SEO.description}>

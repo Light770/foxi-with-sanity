@@ -34,8 +34,8 @@ type PricingTableProps = {
 		currency: string
 		price: string
 		priceLabel: string
-		priceMontly?: string
-		priceLabelMontly?: string
+		priceMonthly?: string
+		priceLabelMonthly?: string
 		buttonName: string
 		buttonLink: string
 	}
@@ -95,8 +95,8 @@ const { type, header, body, footer } = data
 					]}
 				>
 					<span class="pricing__header-currency">{header.currency}</span>
-					<span class="pricing__header-price">{header.priceMontly}</span>
-					<span class="pricing__header-perTime">/{header.priceLabelMontly}</span>
+					<span class="pricing__header-price">{header.priceMonthly}</span>
+					<span class="pricing__header-perTime">/{header.priceLabelMonthly}</span>
 				</h4>
 			</div>
 

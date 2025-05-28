@@ -50,12 +50,19 @@ const {
 <Section id={id} classes={classes}>
 	<Row>
 		<Col span="6" classes="relative">
-			<picture
-				class=`text-image__picture ${offsetImage  ? 'text-image__picture--offset' : ''} ${imagePosition === 'right' ? 'text-image__picture--offset-right' : ''}`
-			>
-				{mobileImage && <source srcset={mobileImage.src} media="(max-width: 1024px)" />}
-				<img src={image.src} alt={title} width={imageWidth} height={imageHeight} />
-			</picture>
+			{image && (
+				<picture
+					class=`text-image__picture ${offsetImage  ? 'text-image__picture--offset' : ''} ${imagePosition === 'right' ? 'text-image__picture--offset-right' : ''}`
+				>
+					{mobileImage && <source srcset={typeof mobileImage === 'string' ? mobileImage : mobileImage.src} media="(max-width: 1024px)" />}
+					<img
+						src={typeof image === 'string' ? image : image.src}
+						alt={title || 'Image'}
+						width={imageWidth || 600}
+						height={imageHeight || 400}
+					/>
+				</picture>
+			)}
 		</Col>
 		<Col span="6" classes={`self-center ${imagePosition === 'right' ? 'lg:-order-1' : ''}`}>
 			<div class="text-image__content">

@@ -3,61 +3,72 @@
 // - Layout
 import Layout from '../layouts/Layout.astro'
 // - UI
-import Feature from '../components/blocks/features/FeatureSticky.astro'
+import FeatureComponent from '../components/blocks/features/FeatureSticky.astro'
 import Hero from '../components/blocks/hero/PageHeader.astro'
 import CTA from '../components/blocks/CTA/BasicDark.astro'
 
-// Data
-import featuresData from '../data/json-files/featuresData.json'
-// - Feature Categories
-const featuresAnalytics = featuresData.filter((feature) => feature.category === 'Analytics')
-const featuresProductivity = featuresData.filter((feature) => feature.category === 'Productivity')
-const featuresSecurity = featuresData.filter((feature) => feature.category === 'Security')
-const featuresIntegrations = featuresData.filter((feature) => feature.category === 'Integrations')
-const featuresSupport = featuresData.filter((feature) => feature.category === 'Support')
+// Data - Fully from Sanity
+import { getFeaturesPage, getFeaturesByCategory } from '../lib/sanity'
+import type { FeaturesPage, FeatureSection, Feature } from '../lib/sanity/types'
 
-// Content
-// - SEO
-const SEO = {
-	title: 'Foxi | Features to Boost Productivity & Security',
-	description:
-		"Explore Foxi's powerful features designed to enhance productivity, ensure top-notch security, and integrate seamlessly with your favorite tools. Join thousands of satisfied users and transform your workflow with Foxi today!"
+// Fetch complete features page data from Sanity
+const featuresPageData: FeaturesPage | null = await getFeaturesPage()
+
+// Fallback data if Sanity data is not available
+const defaultSEO = {
+  title: 'Features | Foxi - Your Productivity Toolkit',
+  description: 'Discover powerful features that boost your productivity and streamline your workflow.'
 }
-// - Page Header
-const header = {
-	title: 'Why you and your team will <strong>love</strong> foxi.',
-	text: 'Streamline your tasks, protect your data, and enjoy working with our tools!'
+
+const defaultHeader = {
+  title: 'Powerful Features',
+  text: 'Discover the tools and capabilities that make Foxi the ultimate productivity solution.'
 }
+
+// Extract data with fallbacks
+const SEO = featuresPageData?.seo || defaultSEO
+const header = featuresPageData?.header || defaultHeader
+const featureSections = featuresPageData?.featureSections || []
+const ctaData = featuresPageData?.cta
+
+// Sort feature sections by order
+const sortedFeatureSections: FeatureSection[] = featureSections.sort((a: FeatureSection, b: FeatureSection) => (a.order || 0) - (b.order || 0))
+
+// Fetch features for each category
+const featuresData: Record<string, Feature[]> = {}
+for (const section of sortedFeatureSections) {
+  if (section.category) {
+    featuresData[section.category] = await getFeaturesByCategory(section.category)
+  }
+}
+
 ---
 
 <Layout title={SEO.title} description={SEO.description}>
-	<Hero title={header.title} text={header.text} />
-	<Feature
-		title="Insightful Analytics"
-		text="Delve into your data with precision and uncover actionable insights."
-		data={featuresAnalytics}
-	/>
-	<Feature
-		title="Efficiency Unleashed"
-		text="Streamline tasks and focus on what matters with tools designed to boost your productivity."
-		data={featuresSecurity}
-		classes="bg-neutral-50 dark:bg-neutral-900"
-	/>
-	<Feature
-		title="Ultimate Data Protection"
-		text="Keep your data safe with top-notch security measures and real-time threat detection."
-		data={featuresProductivity}
-	/>
-	<Feature
-		title="Seamless Connectivity"
-		text="Effortlessly connect your favorite apps and automate workflows for a smoother workday."
-		data={featuresIntegrations}
-		classes="bg-neutral-50 dark:bg-neutral-900"
-	/>
-	<Feature
-		title="24/7 Expert Help"
-		text="Our friendly support team is always here to assist you with any questions or issues."
-		data={featuresSupport}
-	/>
-	<CTA />
+	<Hero title={typeof header.title === 'string' ? header.title : ''} text={header.text} />
+	
+	{sortedFeatureSections.map((section: FeatureSection, index: number) => {
+		const features: Feature[] = featuresData[section.category] || []
+		const isEven = index % 2 === 1
+		const classes = section.backgroundColor || (isEven ? 'bg-neutral-50 dark:bg-neutral-900' : '')
+		
+		return (
+			<FeatureComponent
+				title={typeof section.title === 'string' ? section.title : ''}
+				text={section.text}
+				data={features.map(feature => ({
+					title: typeof feature.title === 'string' ? feature.title : '',
+					icon: feature.icon,
+					description: feature.description
+				}))}
+				classes={classes}
+			/>
+		)
+	})}
+	
+	{ctaData ? (
+		<CTA data={ctaData} />
+	) : (
+		<CTA />
+	)}
 </Layout>

@@ -16,11 +16,13 @@ import Col from '../../../components/ui/Col.astro'
 // - UI
 import Badge from '../../../components/ui/Badge.astro'
 import Breadcrumbs from '../../../components/ui/Breadcrumbs.astro'
+import PortableTextTitle from '../../ui/PortableTextTitle.astro'
+import { isPortableText } from '../../../lib/portableTextHelpers'
 
 // Props
 type Props = {
 	tags?: any
-	title: string
+	title: string | any[] // Support both string and PortableText
 	author?: string
 	publishDate?: string
 }
@@ -33,7 +35,11 @@ const { tags, title, author, publishDate } = Astro.props
 			<header class="post-header">
 				<Breadcrumbs classes="mb-6" />
 				<h1 class="post-header__title">
-					{title}
+					{isPortableText(title) ? (
+						<PortableTextTitle content={title} />
+					) : (
+						title
+					)}
 				</h1>
 				{
 					author ? (

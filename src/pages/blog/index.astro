@@ -12,6 +12,7 @@ import BlogPosts from '../../components/blocks/blog/BlogPosts.astro'
 
 // Data - Now from Sanity instead of content collections
 import { getAllBlogPosts } from '../../lib/sanity'
+import { portableTextToString, isPortableText } from '../../lib/portableTextHelpers'
 
 // Define types for the blog post data
 interface BlogPost {
@@ -45,7 +46,7 @@ const allPosts = await getAllBlogPosts()
 const transformedPosts = allPosts?.map((post: BlogPost) => ({
 	id: post.slug.current,
 	data: {
-		title: post.title,
+		title: isPortableText(post.title) ? portableTextToString(post.title) : post.title,
 		description: post.description,
 		pubDate: new Date(post.pubDate),
 		author: post.author,

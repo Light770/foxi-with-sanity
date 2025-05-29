@@ -13,6 +13,7 @@ import ChipNotification from '../../ui/ChipNotification.astro'
 import { Image } from 'astro:assets'
 import Button from '../../ui/Button.astro'
 import AvatarGroup from '../../ui/AvatarGroup.astro'
+import { portableTextToHTML, isPortableText } from '../../../lib/portableTextHelpers'
 
 // Props
 type Props = {
@@ -36,7 +37,7 @@ const defaultAvatars = [
 // Hero content with Sanity data or defaults
 const heroContent = {
 	customerCount: data?.customerCount || '30K+',
-	title: data?.title || 'Enhance team <strong>performance</strong> with seamless integration',
+	title: isPortableText(data?.title) ? portableTextToHTML(data.title) : (data?.title || 'Enhance team <strong>performance</strong> with seamless integration'),
 	subtitle: data?.subtitle || 'Work smarter, not harder, with our innovative platform',
 	buttonText: data?.ctaText || data?.buttonText || 'Get started for free',
 	buttonLink: data?.ctaLink || data?.buttonLink || '/',

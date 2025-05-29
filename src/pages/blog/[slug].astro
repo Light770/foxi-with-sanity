@@ -7,6 +7,7 @@
 // - Layout
 import Layout from '../../layouts/PostLayout.astro'
 import PortableText from '../../components/ui/PortableText.astro'
+import { portableTextToString, isPortableText } from '../../lib/portableTextHelpers'
 
 // Data
 import { getAllBlogPosts, getBlogPostBySlug, urlFor } from '../../lib/sanity'
@@ -57,7 +58,8 @@ if (!post) {
 
 // Format the post data to match the existing layout expectations
 const formattedPost = {
-	title: post.title,
+	title: isPortableText(post.title) ? portableTextToString(post.title) : post.title,
+	originalTitle: post.title, // Keep original for display with formatting
 	description: post.description,
 	pubDate: new Date(post.pubDate),
 	author: post.author,

@@ -8,6 +8,7 @@
 import StickySidebar from '../basic/StickySidebar.astro'
 import FAQ from '../../ui/Accordion.astro'
 import Card from '../../ui/cards/partials/Card.astro'
+import { portableTextToString, isPortableText } from '../../../lib/portableTextHelpers'
 
 // Props
 type Props = {
@@ -27,6 +28,6 @@ const { title, text, data, type = 'left', classes } = Astro.props
 	</header>
 
 	<Card classes="divide-y divide-neutral-100 dark:divide-neutral-800">
-		{data.map((faq: any) => <FAQ title={faq.question} text={faq.reply} open={faq.open} />)}
+		{data.map((faq: any) => <FAQ title={isPortableText(faq.question) ? portableTextToString(faq.question) : faq.question} text={isPortableText(faq.reply) ? portableTextToString(faq.reply) : faq.reply} open={faq.open} />)}
 	</Card>
 </StickySidebar>

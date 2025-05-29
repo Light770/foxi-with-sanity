@@ -12,7 +12,7 @@ export function portableTextToHTML(portableText: any[]): string {
       normal: ({ children }: { children: string }) => children, // Remove <p> wrapper for titles
     },
     marks: {
-      strong: ({ children }: { children: string }) => `<strong>${children}</strong>`,
+      strong: ({ children }: { children: string }) => `<strong class="text-primary-500">${children}</strong>`,
       em: ({ children }: { children: string }) => `<em class="italic">${children}</em>`,
     },
   }

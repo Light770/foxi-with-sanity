@@ -10,6 +10,7 @@ import CTA from '../components/blocks/CTA/BasicDark.astro'
 // Data - Fully from Sanity
 import { getFeaturesPage, getFeaturesByCategory } from '../lib/sanity'
 import type { FeaturesPage, FeatureSection, Feature } from '../lib/sanity/types'
+import { portableTextToString, isPortableText } from '../lib/portableTextHelpers'
 
 // Fetch complete features page data from Sanity
 const featuresPageData: FeaturesPage | null = await getFeaturesPage()
@@ -45,7 +46,7 @@ for (const section of sortedFeatureSections) {
 ---
 
 <Layout title={SEO.title} description={SEO.description}>
-	<Hero title={typeof header.title === 'string' ? header.title : ''} text={header.text} />
+	<Hero title={isPortableText(header.title) ? portableTextToString(header.title) : header.title} text={header.text} />
 	
 	{sortedFeatureSections.map((section: FeatureSection, index: number) => {
 		const features: Feature[] = featuresData[section.category] || []

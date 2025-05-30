@@ -178,3 +178,129 @@ export interface PricingPage {
   faqBackgroundClass?: string
   cta?: CTAData
 }
+
+// Configuration Types
+export interface AnalyticsConfig {
+  _id: string
+  googleSiteVerification: string
+  googleAnalyticsMeasurementID: string
+  googleTagManagerID: string
+  enableAnalytics: boolean
+  cookieConsent: boolean
+}
+
+export interface NavigationLogo {
+  image: string
+  alt: string
+  text?: string
+}
+
+export interface NavSubItem {
+  name: string
+  link: string
+}
+
+export interface NavItem {
+  name: string
+  link: string
+  submenu?: NavSubItem[]
+}
+
+export interface NavAction {
+  name: string
+  link: string
+  style: 'primary' | 'secondary' | 'neutral'
+  variation?: 'outline' | 'link' | ''
+  size: 'sm' | 'base' | 'lg'
+}
+
+export interface MobileMenuSettings {
+  showLogo: boolean
+  closeOnItemClick: boolean
+}
+
+export interface NavigationConfig {
+  _id: string
+  logo: NavigationLogo
+  navItems: NavItem[]
+  navActions: NavAction[]
+  mobileMenuSettings: MobileMenuSettings
+}
+
+export interface FooterLogo {
+  image?: string
+  alt: string
+  text?: string
+}
+
+export interface FooterAbout {
+  title: string
+  aboutText: string
+  logo: FooterLogo
+}
+
+export interface FooterSubCategory {
+  subCategory: string
+  subCategoryLink: string
+  openInNewTab?: boolean
+}
+
+export interface FooterColumn {
+  category: string
+  subCategories: FooterSubCategory[]
+  order?: number
+}
+
+export interface FooterAdditionalLink {
+  text: string
+  url: string
+}
+
+export interface SubFooter {
+  copywriteText: string
+  additionalLinks?: FooterAdditionalLink[]
+}
+
+export interface FooterSettings {
+  showSocialLinks: boolean
+  backgroundColor: 'default' | 'dark' | 'light' | 'primary'
+}
+
+export interface FooterConfig {
+  _id: string
+  footerAbout: FooterAbout
+  footerColumns: FooterColumn[]
+  subFooter: SubFooter
+  footerSettings: FooterSettings
+}
+
+export interface SocialLink {
+  platform: 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'youtube' | 'discord' | 'tiktok' | 'github' | 'other'
+  customPlatformName?: string
+  url: string
+  icon?: string
+  displayName?: string
+  openInNewTab: boolean
+  isActive: boolean
+  order?: number
+}
+
+export interface SocialDisplaySettings {
+  showInHeader: boolean
+  showInFooter: boolean
+  showLabels: boolean
+  iconSize: 'sm' | 'md' | 'lg'
+  style: 'simple' | 'filled' | 'outlined'
+}
+
+export interface SocialSEOSettings {
+  addNofollow: boolean
+  addNoopener: boolean
+}
+
+export interface SocialLinksConfig {
+  _id: string
+  socialLinks: SocialLink[]
+  displaySettings: SocialDisplaySettings
+  seoSettings: SocialSEOSettings
+}

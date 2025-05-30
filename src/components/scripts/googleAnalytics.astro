@@ -1,6 +1,9 @@
 ---
 // Google Analytics tracking script
-import { googleAnalyticsMeasurementID } from '../../../src/config/analytics.ts'
+import { getGoogleAnalyticsMeasurementID } from '../../../src/config/analytics.ts'
+
+// Fetch dynamic analytics configuration
+const googleAnalyticsMeasurementID = await getGoogleAnalyticsMeasurementID()
 ---
 
 <script

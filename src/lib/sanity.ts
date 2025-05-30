@@ -314,6 +314,120 @@ export async function getSiteConfig() {
   return await sanityClient.fetch(query)
 }
 
+// Fetch analytics configuration
+export async function getAnalyticsConfig() {
+  const query = `*[_type == "analyticsConfig"][0] {
+    _id,
+    googleSiteVerification,
+    googleAnalyticsMeasurementID,
+    googleTagManagerID,
+    enableAnalytics,
+    cookieConsent
+  }`
+
+  return await sanityClient.fetch(query)
+}
+
+// Fetch navigation configuration
+export async function getNavigationConfig() {
+  const query = `*[_type == "navigationConfig"][0] {
+    _id,
+    logo {
+      "image": image.asset->url,
+      alt,
+      text
+    },
+    navItems[] {
+      name,
+      link,
+      submenu[] {
+        name,
+        link
+      }
+    },
+    navActions[] {
+      name,
+      link,
+      style,
+      size
+    },
+    mobileMenuSettings {
+      showLogo,
+      closeOnItemClick
+    }
+  }`
+
+  return await sanityClient.fetch(query)
+}
+
+// Fetch footer configuration
+export async function getFooterConfig() {
+  const query = `*[_type == "footerConfig"][0] {
+    _id,
+    footerAbout {
+      title,
+      aboutText,
+      logo {
+        "image": image.asset->url,
+        alt,
+        text
+      }
+    },
+    footerColumns[] {
+      category,
+      subCategories[] {
+        subCategory,
+        subCategoryLink,
+        openInNewTab
+      },
+      order
+    } | order(order asc),
+    subFooter {
+      copywriteText,
+      additionalLinks[] {
+        text,
+        url
+      }
+    },
+    footerSettings {
+      showSocialLinks,
+      backgroundColor
+    }
+  }`
+
+  return await sanityClient.fetch(query)
+}
+
+// Fetch social links configuration
+export async function getSocialLinksConfig() {
+  const query = `*[_type == "socialLinksConfig"][0] {
+    _id,
+    socialLinks[] {
+      platform,
+      customPlatformName,
+      url,
+      icon,
+      displayName,
+      openInNewTab,
+      isActive,
+      order
+    }[isActive == true] | order(order asc),
+    displaySettings {
+      showInHeader,
+      showInFooter,
+      showLabels,
+      iconSize,
+      style
+    },
+    seoSettings {
+      addNofollow,
+      addNoopener
+    }
+  }`
+
+  return await sanityClient.fetch(query)
+}
+
 // Fetch hero sections
 export async function getHeroSection(page: string) {
   const query = `*[_type == "hero" && page == $page][0] {

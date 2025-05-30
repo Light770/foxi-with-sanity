@@ -1,6 +1,9 @@
 ---
 // Google Tag Manager head script
-import { googleTagManagerID } from '../../../src/config/analytics'
+import { getGoogleTagManagerID } from '../../../src/config/analytics'
+
+// Fetch dynamic analytics configuration
+const googleTagManagerID = await getGoogleTagManagerID()
 ---
 
 <!-- Google Tag Manager -->

@@ -1,10 +1,14 @@
 ---
 // Google Tag Manager head script
-import { googleTagManagerID } from '../../config/analytics'
+import { getGoogleTagManagerID, isAnalyticsEnabled } from '../../config/analytics'
+
+// Fetch dynamic analytics configuration
+const googleTagManagerID = await getGoogleTagManagerID()
+const analyticsEnabled = await isAnalyticsEnabled()
 ---
 
 {
-	googleTagManagerID && (
+	analyticsEnabled && googleTagManagerID && (
 		<noscript>
 			<iframe
 				src={`https://www.googletagmanager.com/ns.html?id=${googleTagManagerID}`}

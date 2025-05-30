@@ -7,10 +7,14 @@ import GoogleSearchConsole from '../../scripts/googleSearchConsole.astro'
 // Partials
 import Seo from './partials/Seo.astro'
 // Data
-import { configData } from '../../../config/config'
+import { getConfigData } from '../../../config/config'
+import { getGoogleAnalyticsMeasurementID, getGoogleTagManagerID, isAnalyticsEnabled } from '../../../config/analytics'
 
-import { googleAnalyticsMeasurementID } from '../../../config/analytics'
-import { googleTagManagerID } from '../../../config/analytics'
+// Fetch dynamic configuration from Sanity
+const configData = await getConfigData()
+const googleAnalyticsMeasurementID = await getGoogleAnalyticsMeasurementID()
+const googleTagManagerID = await getGoogleTagManagerID()
+const analyticsEnabled = await isAnalyticsEnabled()
 
 // Props
 type Props = {
@@ -31,8 +35,8 @@ const {
 ---
 
 <head>
-	{googleAnalyticsMeasurementID && <GoogleAnalytics />}
-	{googleTagManagerID && <GoogleTagManagerHead />}
+	{analyticsEnabled && googleAnalyticsMeasurementID && <GoogleAnalytics />}
+	{analyticsEnabled && googleTagManagerID && <GoogleTagManagerHead />}
 	<GoogleSearchConsole />
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />

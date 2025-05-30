@@ -1,6 +1,9 @@
 ---
 // Google Search Console meta tag
-import { googleSiteVerification } from '../../../src/config/analytics'
+import { getGoogleSiteVerification } from '../../../src/config/analytics'
+
+// Fetch dynamic analytics configuration
+const googleSiteVerification = await getGoogleSiteVerification()
 ---
 
 {

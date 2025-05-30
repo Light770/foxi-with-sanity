@@ -9,10 +9,15 @@
 import { Icon } from 'astro-icon/components'
 
 // Data
-import { socialLinks } from '../../config/socialLinks'
-import { footerNavigationData } from '../../config/footerNavigation'
+import { getSocialLinksForFooter, getSocialLinkAttributes } from '../../config/socialLinks'
+import { getFooterNavigationData } from '../../config/footerNavigation'
 
-const { footerAbout, footerColumns, subFooter } = footerNavigationData
+// Fetch dynamic data from Sanity
+const footerData = await getFooterNavigationData()
+const { footerAbout, footerColumns, subFooter } = footerData
+
+const socialLinksForFooter = await getSocialLinksForFooter()
+const socialLinkAttributes = await getSocialLinkAttributes()
 ---
 
 <footer class="footer">
@@ -55,10 +60,15 @@ const { footerAbout, footerColumns, subFooter } = footerNavigationData
 					<h2 class="sr-only" id="footer-social-links-dark">Social Media Links</h2>
 					<ul>
 						{
-							socialLinks.map((social) => (
+							socialLinksForFooter.map((social) => (
 								<li>
-									<a href={social.link} aria-label={social.name}>
-										<Icon name={social.icon} />
+									<a
+										href={social.url}
+										aria-label={social.displayName || social.platform}
+										target={social.openInNewTab ? '_blank' : '_self'}
+										rel={socialLinkAttributes.rel}
+									>
+										<Icon name={social.icon || `${social.platform}-icon`} />
 									</a>
 								</li>
 							))

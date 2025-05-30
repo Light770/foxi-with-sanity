@@ -18,8 +18,11 @@ import Button from './Button.astro'
 import Switcher from './ModeSwitcher.astro'
 
 // Data
-import { navigationBarData } from '../../config/navigationBar'
-const { logo, navItems, navActions } = navigationBarData
+import { getNavigationBarData } from '../../config/navigationBar'
+
+// Fetch dynamic data from Sanity
+const navigationData = await getNavigationBarData()
+const { logo, navItems, navActions } = navigationData
 
 // Determine current path
 const path = new URL(Astro.request.url).pathname
@@ -27,12 +30,8 @@ function isActivePath(currentPath: string): boolean {
 	return path === currentPath || path === `${currentPath}/`
 }
 
-// Type assertion for navActions to ensure type safety
-const savedNavActions = navActions.map((action) => ({
-	...action,
-	size: action.size as 'base' | 'lg' | 'sm',
-	style: action.style as 'primary' | 'secondary' | 'neutral'
-}))
+// navActions should now have correct types from Sanity
+const savedNavActions = navActions
 ---
 
 <header class="header">
@@ -107,7 +106,13 @@ const savedNavActions = navActions.map((action) => ({
 			<div class="header__actions">
 				{
 					savedNavActions.map((action) => (
-						<Button classes="flex-auto" size={action.size} style={action.style} modal="signup">
+						<Button
+							classes="flex-auto"
+							size={action.size}
+							style={action.style}
+							variation={action.variation || undefined}
+							modal="signup"
+						>
 							{action.name}
 						</Button>
 					))

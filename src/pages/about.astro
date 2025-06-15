@@ -1,0 +1,157 @@
+---
+// About Page (A propos)
+import Layout from '../layouts/Layout.astro'
+import Hero from '../components/blocks/hero/PageHeader.astro'
+import TextImage from '../components/blocks/basic/TextImage.astro'
+import FeatureList from '../components/blocks/features/FeatureList.astro'
+import AvatarGroup from '../components/ui/AvatarGroup.astro'
+import CTA from '../components/blocks/CTA/BasicDark.astro'
+
+// Content
+const SEO = {
+	title: 'À Propos | Foxi',
+	description: 'Découvrez notre histoire, nos valeurs et notre équipe d\'experts passionnés.'
+}
+
+const header = {
+	title: 'À Propos de <strong>Foxi</strong>',
+	text: 'Découvrez qui nous sommes, nos valeurs et la passion qui nous anime au quotidien.'
+}
+
+// Team data (will be from Sanity later)
+const teamMembers = [
+	{ name: 'Marie Dubois', role: 'CEO', avatar: '/src/assets/avatars/avatar-01.webp' },
+	{ name: 'Pierre Martin', role: 'CTO', avatar: '/src/assets/avatars/avatar-02.webp' },
+	{ name: 'Sophie Laurent', role: 'Lead Designer', avatar: '/src/assets/avatars/avatar-03.webp' },
+	{ name: 'Thomas Bernard', role: 'Lead Developer', avatar: '/src/assets/avatars/avatar-04.webp' },
+	{ name: 'Julie Moreau', role: 'Product Manager', avatar: '/src/assets/avatars/avatar-05.webp' },
+	{ name: 'Antoine Rousseau', role: 'Marketing Director', avatar: '/src/assets/avatars/avatar-06.webp' }
+]
+
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={header.title} text={header.text} />
+	
+	<!-- Notre histoire (Timeline - TODO: Create custom timeline component) -->
+	<section class="py-16 bg-neutral-50 dark:bg-neutral-900">
+		<div class="container mx-auto px-4">
+			<h2 class="text-3xl font-bold text-center mb-12">Notre Histoire</h2>
+			<div class="max-w-4xl mx-auto">
+				<!-- Placeholder for timeline component -->
+				<div class="space-y-8">
+					<div class="flex items-center space-x-4">
+						<div class="w-4 h-4 bg-primary-500 rounded-full"></div>
+						<div>
+							<h3 class="font-semibold">2020 - Les Débuts</h3>
+							<p class="text-neutral-600 dark:text-neutral-400">Création de Foxi avec une vision claire : simplifier la productivité.</p>
+						</div>
+					</div>
+					<div class="flex items-center space-x-4">
+						<div class="w-4 h-4 bg-primary-500 rounded-full"></div>
+						<div>
+							<h3 class="font-semibold">2022 - Expansion</h3>
+							<p class="text-neutral-600 dark:text-neutral-400">Lancement de nouvelles fonctionnalités et croissance de l'équipe.</p>
+						</div>
+					</div>
+					<div class="flex items-center space-x-4">
+						<div class="w-4 h-4 bg-primary-500 rounded-full"></div>
+						<div>
+							<h3 class="font-semibold">2024 - Innovation</h3>
+							<p class="text-neutral-600 dark:text-neutral-400">Intégration de l'intelligence artificielle et expansion internationale.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	
+	<!-- Nos valeurs / Politique RSE (double text layout) -->
+	<TextImage 
+		title="Nos Valeurs"
+		text="Chez Foxi, nous croyons en l'innovation responsable, la transparence et l'excellence. Notre politique RSE guide chacune de nos décisions pour créer un impact positif sur notre communauté et l'environnement."
+		secondaryText="Nous nous engageons à réduire notre empreinte carbone, à promouvoir la diversité au sein de nos équipes et à développer des solutions durables qui profitent à tous nos utilisateurs."
+		image="/src/assets/hero-01.png"
+		imagePosition="right"
+		layout="double-text"
+	/>
+	
+	<!-- Réassurances -->
+	<FeatureList 
+		data={{
+			title: "Pourquoi Nous Choisir",
+			description: "Nos engagements envers l'excellence",
+			features: [
+				{
+					_id: "1",
+					title: "Expertise Reconnue",
+					icon: "trophy",
+					description: "Plus de 10 ans d'expérience dans le développement de solutions productives.",
+					category: "expertise"
+				},
+				{
+					_id: "2",
+					title: "Innovation Continue", 
+					icon: "light-bulb",
+					description: "Nous investissons constamment dans la recherche et le développement.",
+					category: "innovation"
+				},
+				{
+					_id: "3",
+					title: "Support Dédié",
+					icon: "user-group",
+					description: "Une équipe dédiée pour vous accompagner dans votre transformation digitale.",
+					category: "support"
+				}
+			],
+			layout: "4",
+			alignment: "left"
+		}}
+		classes="bg-neutral-50 dark:bg-neutral-900"
+	/>
+	
+	<!-- Notre équipe d'experts -->
+	<section class="py-16">
+		<div class="container mx-auto px-4">
+			<h2 class="text-3xl font-bold text-center mb-4">Notre Équipe d'Experts</h2>
+			<p class="text-center text-neutral-600 dark:text-neutral-400 mb-12 max-w-2xl mx-auto">
+				Une équipe passionnée et expérimentée, dédiée à votre succès.
+			</p>
+			
+			<!-- Team Grid -->
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+				{teamMembers.map((member) => (
+					<div class="text-center">
+						<img 
+							src={member.avatar} 
+							alt={member.name}
+							class="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+						/>
+						<h3 class="font-semibold text-lg">{member.name}</h3>
+						<p class="text-primary-500">{member.role}</p>
+					</div>
+				))}
+			</div>
+		</div>
+	</section>
+	
+	<!-- Marque employeur -->
+	<TextImage 
+		title="Rejoindre Notre Équipe"
+		text="Chez Foxi, nous cultivons un environnement de travail stimulant où chaque talent peut s'épanouir. Nous offrons des opportunités de croissance, une culture d'innovation et un équilibre vie professionnelle/personnelle optimal."
+		image="/src/assets/hero-01.png"
+		imagePosition="left"
+		classes="bg-neutral-50 dark:bg-neutral-900"
+	/>
+	
+	<!-- Postuler chez nous -->
+	<CTA 
+		title="Rejoignez Notre Aventure"
+		text="Découvrez nos offres d'emploi et candidatez pour faire partie de l'équipe Foxi."
+		cta={{
+			text: "Voir les Offres",
+			href: "#careers",
+			style: "primary"
+		}}
+	/>
+</Layout>

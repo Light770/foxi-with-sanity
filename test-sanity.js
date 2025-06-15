@@ -1,9 +1,16 @@
-import { getPricingPlans, getPricingPage } from './src/lib/sanity.js'
+import { getAllBlogPosts, getPricingPlans, getPricingPage } from './src/lib/sanity.ts'
 
 async function testSanity() {
   console.log('🧪 Testing Sanity connection...')
   
   try {
+    console.log('\n📝 Testing blog posts...')
+    const posts = await getAllBlogPosts()
+    console.log('Blog posts found:', posts?.length || 0)
+    if (posts && posts.length > 0) {
+      console.log('First blog post:', posts[0])
+    }
+    
     console.log('\n📋 Testing pricing plans...')
     const plans = await getPricingPlans()
     console.log('Plans found:', plans?.length || 0)
@@ -20,6 +27,7 @@ async function testSanity() {
     
   } catch (error) {
     console.error('❌ Error:', error.message)
+    console.error('Stack:', error.stack)
   }
 }
 

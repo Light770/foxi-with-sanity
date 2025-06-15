@@ -13,7 +13,7 @@ import Col from '../../../components/ui/Col.astro'
 // - UI
 import Post from '../../../components/ui/cards/BlogCard.astro'
 import TagNavigation from '../../../components/ui/blog/TagNavigation.astro'
-
+import PortableTextTitle from '../../../components/ui/PortableTextTitle.astro'
 // Props
 type Props = {
 	data: any
@@ -24,10 +24,21 @@ const { data: posts } = Astro.props
 // const sortedPosts = posts.sort((a: any, b: any) => {
 // 	return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
 // })
+const title = 'Dernières Actualités'
 
 ---
 
 <Section>
+		<Row>
+		<Col span="12" align="center" classes="mb-12 max-w-4xl mx-auto">
+			<h2 class="text-pretty">Dernières Actualités
+			</h2>
+			<p class="pb-0 text-lg">
+				Restez informé des dernières nouveautés et tendances.
+				<!-- {headerData!.text} -->
+			</p>
+		</Col>
+	</Row>
 	<Row>
 		<Col span="12">
 			<TagNavigation />

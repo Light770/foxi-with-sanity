@@ -1,0 +1,214 @@
+---
+// Single Service Page
+import Layout from '../../layouts/Layout.astro'
+import Hero from '../../components/blocks/hero/PageHeader.astro'
+import TextImage from '../../components/blocks/basic/TextImage.astro'
+import FeatureList from '../../components/blocks/features/FeatureList.astro'
+import TestimonialDark from '../../components/blocks/testimonials/BasicDark.astro'
+import FAQ from '../../components/blocks/FAQ/FaqSticky.astro'
+import CTA from '../../components/blocks/CTA/BasicLight.astro'
+import FeatureCard from '../../components/ui/cards/FeatureCard.astro'
+
+// Data - From Sanity
+import { getTestimonials, getFAQsByCategory, getAllFeatureCards, getAllServices, getServiceBySlug } from '../../lib/sanity'
+import { urlFor } from '../../lib/sanity'
+import type { Service, FallbackService } from '../../lib/types'
+
+// Import fallback assets
+import serviceImage from '../../assets/test.jpg'
+
+export async function getStaticPaths() {
+	try {
+		const services = await getAllServices()
+		
+		if (!services || services.length === 0) {
+			console.log('No services found in Sanity, using fallback static paths')
+			// Fallback to static data if no services in Sanity
+			const fallbackServices = [
+				{ slug: { current: 'conseil-strategique-digital' } },
+				{ slug: { current: 'developpement-solutions' } },
+				{ slug: { current: 'transformation-digitale' } },
+				{ slug: { current: 'data-analytics' } },
+				{ slug: { current: 'cloud-infrastructure' } },
+				{ slug: { current: 'cybersecurite-conformite' } }
+			]
+			
+			return fallbackServices.map((service) => ({
+				params: { slug: service.slug.current },
+				props: { service: null, slug: service.slug.current }
+			}))
+		}
+		
+		return services.map((service) => ({
+			params: { slug: service.slug.current },
+			props: { service, slug: service.slug.current }
+		}))
+	} catch (error) {
+		console.error('Error fetching services for static paths:', error)
+		// Fallback to static data on error
+		const fallbackServices = [
+			{ slug: { current: 'conseil-strategique-digital' } },
+			{ slug: { current: 'developpement-solutions' } },
+			{ slug: { current: 'transformation-digitale' } },
+			{ slug: { current: 'data-analytics' } },
+			{ slug: { current: 'cloud-infrastructure' } },
+			{ slug: { current: 'cybersecurite-conformite' } }
+		]
+		
+		return fallbackServices.map((service) => ({
+			params: { slug: service.slug.current },
+			props: { service: null, slug: service.slug.current }
+		}))
+	}
+}
+
+const { service: propsService, slug } = Astro.props
+
+// If service wasn't passed as prop, fetch it by slug
+let service: Service | FallbackService | null = propsService
+if (!service) {
+	service = await getServiceBySlug(slug)
+}
+
+// Fallback service data if not found in Sanity
+if (!service) {
+	const fallbackServices: Record<string, FallbackService> = {
+		'conseil-strategique-digital': {
+			title: 'Conseil Stratégique Digital',
+			description: 'Transformez votre vision en stratégie digitale gagnante avec notre expertise.',
+			longDescription: 'Transformez votre vision en stratégie digitale gagnante avec notre expertise.',
+			category: 'Strategy',
+			image: serviceImage,
+			features: [
+				{ title: 'Analyse approfondie', description: 'Audit complet de votre écosystème digital' },
+				{ title: 'Roadmap sur mesure', description: 'Plan d\'action détaillé et priorisé' },
+				{ title: 'KPIs pertinents', description: 'Indicateurs de performance adaptés' },
+				{ title: 'Accompagnement continu', description: 'Support tout au long de la transformation' }
+			],
+			advantages: [
+				{
+					title: 'Vision 360° de votre transformation',
+					text: 'Notre approche holistique vous permet d\'avoir une vue d\'ensemble de votre transformation digitale, en identifiant les opportunités et les risques à chaque étape.'
+				},
+				{
+					title: 'Stratégie alignée sur vos objectifs',
+					text: 'Nous travaillons en étroite collaboration avec vos équipes pour définir une stratégie qui répond précisément à vos enjeux business et vos ambitions de croissance.'
+				},
+				{
+					title: 'ROI mesurable et optimisé',
+					text: 'Chaque action est pensée pour maximiser votre retour sur investissement, avec des métriques claires pour suivre les progrès et ajuster la stratégie si nécessaire.'
+				}
+			]
+		}
+		// Add other fallback services as needed
+	}
+	
+	service = fallbackServices[slug] || fallbackServices['conseil-strategique-digital']
+}
+
+// Content
+const SEO = {
+	title: `${service.title} | Services | Andy & Co`,
+	description: service.description
+}
+
+const header = {
+	title: service.title,
+	text: service.description
+}
+
+// Get related data
+const testimonials = await getTestimonials()
+const featuredTestimonial = testimonials?.find(t => t.featured) || testimonials?.[0]
+
+// Get FAQ data for the service category
+const faqData = await getFAQsByCategory(service.category)
+
+// Get all feature cards to find related ones
+const allFeatureCards = await getAllFeatureCards()
+const relatedFeatures = allFeatureCards?.filter(card => card.category === service.category).slice(0, 3) || []
+
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={header.title} text={header.text} />
+	
+	<!-- Caractéristiques -->
+	<section class="py-16">
+		<div class="container mx-auto px-4">
+			<h2 class="text-3xl font-bold text-center mb-12">Caractéristiques Principales</h2>
+			<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+				{service.features?.map((feature, index) => (
+					<FeatureCard
+						title={feature.title}
+						subtitle={feature.description}
+					/>
+				))}
+			</div>
+		</div>
+	</section>
+	
+	<!-- Avantages -->
+	{service.advantages?.map((advantage, index) => (
+		<TextImage
+			title={advantage.title}
+			text={advantage.text}
+			image={service.image}
+			imagePosition={index % 2 === 0 ? "right" : "left"}
+		/>
+	))}
+	
+	<!-- Réassurances -->
+	<FeatureList 
+		data={{
+			title: "Pourquoi Nous Choisir ?",
+			description: "Les garanties que nous vous apportons",
+			features: [
+				{
+					_id: "1",
+					title: "Expertise reconnue",
+					icon: "trophy",
+					description: "Plus de 10 ans d'expérience dans le domaine.",
+					category: "expertise"
+				},
+				{
+					_id: "2", 
+					title: "Support dédié",
+					icon: "user-group",
+					description: "Une équipe dédiée pour vous accompagner.",
+					category: "support"
+				},
+				{
+					_id: "3",
+					title: "ROI garanti",
+					icon: "arrow-trending-up",
+					description: "Des résultats mesurables et un retour sur investissement prouvé.",
+					category: "results"
+				}
+			],
+			layout: "3",
+			alignment: "center"
+		}}
+	/>
+	
+	<!-- Témoignage client -->
+	{featuredTestimonial && (
+		<TestimonialDark 
+			blockquote={featuredTestimonial.quote}
+			figcaption={featuredTestimonial.author}
+			cite={`${featuredTestimonial.role}, ${featuredTestimonial.company}`}
+		/>
+	)}
+	
+	<!-- FAQ -->
+	{faqData && faqData.length > 0 && (
+		<FAQ 
+			title="Questions Fréquentes"
+			text={`Tout ce que vous devez savoir sur ${service.title.toLowerCase()}`}
+			data={faqData}
+		/>
+	)}
+	
+	<!-- CTA conversion -->
+	<CTA />
+</Layout>

@@ -4,13 +4,17 @@
 import Layout from '../layouts/Layout.astro'
 // - UI
 import Hero from '../components/blocks/hero/HomeCTA.astro'
+import TextImage from '../components/blocks/basic/TextImage.astro'
 import FeatureCardsSection from '../components/blocks/features/FeatureCards.astro'
+import FeatureList from '../components/blocks/features/FeatureList.astro'
+import BlogPosts from '../components/blocks/blog/BlogPosts.astro'
 import Testimonial from '../components/blocks/testimonials/BasicDark.astro'
-import HighlightBlocks from '../components/blocks/highlights/HightlightRows.astro'
-import CTA from '../components/blocks/CTA/BasicDark.astro'
+import SignUpModal from '../components/blocks/modal/SignUp.astro'
+import CTA from '../components/blocks/CTA/BasicLight.astro'
+import FormHero from '../components/blocks/hero/ContactHero.astro'
 
 // Data - Fully from Sanity
-import { getHomePage, getTestimonials, getAllFeatureCards } from '../lib/sanity'
+import { getHomePage, getTestimonials, getAllFeatureCards, getAllBlogPosts } from '../lib/sanity'
 import type { HomePage, HighlightBlock } from '../lib/sanity/types'
 
 // Fetch complete home page data from Sanity
@@ -34,20 +38,7 @@ if (!featureCardData || featureCardData.length === 0) {
 }
 
 // Feature card header data with fallback
-const featureCardHeader = homePageData?.featureCardHeader || {
-	title: [
-		{
-			_type: 'block',
-			children: [
-				{
-					_type: 'span',
-					text: 'Innovative tools to transform your workflow'
-				}
-			]
-		}
-	],
-	text: 'Explore the suite of tools designed to streamline your workflow, enhance productivity, and drive growth. Each product is crafted with precision to meet your needs and exceed your expectations.'
-}
+const featureCardHeader = homePageData?.featureCardHeader
 
 const ctaData = homePageData?.cta
 const highlightBlocks = homePageData?.highlightBlocks || []
@@ -66,23 +57,113 @@ const testimonialBackgroundPosition = homePageData?.testimonialBackgroundPositio
 
 // Fallback background image
 import defaultTestimonialBackground from '../assets/testimonial-bg-01.webp'
-const finalTestimonialBackground = testimonialBackground || defaultTestimonialBackground
+// const finalTestimonialBackground = testimonialBackground || defaultTestimonialBackground
+const finalTestimonialBackground = defaultTestimonialBackground
 
-// Sort highlight blocks by order
-const sortedHighlightBlocks: HighlightBlock[] = highlightBlocks.sort((a: HighlightBlock, b: HighlightBlock) => (a.order || 0) - (b.order || 0))
+// Get blog posts for homepage
+const blogPosts = await getAllBlogPosts()
+const latestBlogPosts = blogPosts?.slice(0, 3) || [] // Show 3 latest posts
 
+// Transform blog posts for component
+const transformedBlogPosts = latestBlogPosts.map((post: any) => ({
+	id: post.slug.current,
+	data: {
+		title: post.title,
+		description: post.description,
+		pubDate: new Date(post.pubDate),
+		author: post.author,
+		image: post.image,
+		tags: post.tags || []
+	}
+}))
+
+// - Page Header
+const header = {
+	title: 'Un projet ? Une question ? <strong>Écrivez-nous</strong> !',
+	text: "Une question, besoin d'assistance ou envie de partager vos retours ? Notre équipe est là pour vous accompagner."
+}
 ---
 
 <Layout title={SEO.title} description={SEO.description}>
+	<script define:vars={{ heroData }}>
+		console.log('Hero Data:', heroData)
+	</script>
+	<!-- H1 avec mots clés (video) -->
 	<Hero data={heroData} />
-	<FeatureCardsSection data={featureCardData} header={featureCardHeader} />
-	<Testimonial
-		blockquote={featuredTestimonial?.quote}
-		figcaption={featuredTestimonial?.author}
-		cite={featuredTestimonial?.role && featuredTestimonial?.company ? `${featuredTestimonial.role}, ${featuredTestimonial.company}` : featuredTestimonial?.company || featuredTestimonial?.role}
-		bg={finalTestimonialBackground}
-		bgPosition={testimonialBackgroundPosition}
+	
+	<!-- Qui sommes nous ? (text) -->
+	<TextImage 
+		title="Qui Sommes Nous ?"
+		text="ANDY & CO est une entreprise innovante spécialisée dans la vente de produits souvenirs avant-gardistes. Au-delà de nos gammes régulières, nous misons sur la personnalisation avec une équipe de designers dédiée capable de donner vie aux idées uniques de leurs clients. "
+		image="/src/assets/hero-01.png"
+		imagePosition="right"
 	/>
-	<HighlightBlocks data={sortedHighlightBlocks} />
-	<CTA data={ctaData} />
+	
+	<!-- Nos services (triple) -->
+	<FeatureCardsSection data={featureCardData} header={{
+		title: [{
+			_type: 'block',
+			children: [{ _type: 'span', text: 'Nos Services' }]
+		}],
+		text: 'Découvrez notre gamme complète de services conçus pour vous accompagner.'
+	}} />
+	
+	<!-- Réassurances (features_triple) -->
+	<FeatureList 
+		data={{
+			title: "Pourquoi Choisir Andy & Co. ?",
+			description: "Des garanties solides pour votre tranquillité d'esprit",
+			features: [
+				{
+					_id: "1",
+					title: "Sécurité Maximale",
+					icon: "shield-check",
+					description: "Nos experts en contrôle qualité vérifie la conformité de vos produits.",
+					category: "security"
+				},
+				{
+					_id: "2",
+					title: "Support Client",
+					icon: "chat-bubble-left-ellipsis", 
+					description: "Notre équipe d'experts est disponible à tout moment pour vous accompagner.",
+					category: "support"
+				},
+				{
+					_id: "3",
+					title: "Performance Garantie",
+					icon: "rocket",
+					description: "Une équipe avec 40 ans d'expérience dans le domaine, garantissant des produits de haute qualité.",
+					category: "performance"
+				}
+			],
+			layout: "4",
+			alignment: "left"
+		}}
+		classes="bg-neutral-50 dark:bg-neutral-900"
+	/>
+	
+	<!-- Blog (articles) -->
+	{transformedBlogPosts.length > 0 && (
+		<BlogPosts 
+			data={transformedBlogPosts}
+		/>
+	)}
+	
+	<!-- Témoignage client (quote) -->
+	{featuredTestimonial && (
+		<Testimonial
+			blockquote={featuredTestimonial?.quote}
+			figcaption={featuredTestimonial?.author}
+			cite=""
+			// cite={featuredTestimonial?.role && featuredTestimonial?.company ? `${featuredTestimonial.role}, ${featuredTestimonial.company}` : featuredTestimonial?.company || featuredTestimonial?.role}
+			bg={finalTestimonialBackground}
+			bgPosition={testimonialBackgroundPosition}
+		/>
+	)}
+	<FormHero
+		title={header.title}
+		text={header.text}
+		id="contact"
+		classes="bg-neutral-50 dark:bg-neutral-950/80"
+	/>
 </Layout>

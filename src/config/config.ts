@@ -24,13 +24,13 @@ export interface Config {
 
 // Fallback configuration
 const fallbackConfig: Config = {
-	siteTitle: 'Foxi. Tailwind CSS Astro Starter Kit by Oxygenna',
+	siteTitle: 'Andy & Co. Des produits modernes, de qualité, dessinés à la main par des artistes français.',
 	siteDescription:
-		'Foxi is a design and development agency that specializes in creating beautiful and functional websites.',
+		'ANDY & CO est une entreprise innovante spécialisée dans la vente de produits souvenirs avant-gardistes. Au-delà de nos gammes régulières, nous misons sur la personnalisation avec une équipe de designers dédiée capable de donner vie aux idées uniques de leurs clients.',
 	ogImage: '/og.jpg',
 	logo: {
-		src: '/logo.svg',
-		alt: 'Foxi. logo'
+		src: '/logo-favicon.png',
+		alt: 'Andy & Co. logo'
 	},
 	canonical: true,
 	noindex: false,

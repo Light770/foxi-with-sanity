@@ -10,14 +10,27 @@ import { Icon } from 'astro-icon/components'
 
 // Data
 import { getSocialLinksForFooter, getSocialLinkAttributes } from '../../config/socialLinks'
-import { getFooterNavigationData } from '../../config/footerNavigation'
+import { getNavigationBarData } from '../../config/navigationBar'
+// import { getFooterNavigationData } from '../../config/footerNavigation'
+import { getFooterConfig } from '../../lib/sanity'
 
 // Fetch dynamic data from Sanity
-const footerData = await getFooterNavigationData()
-const { footerAbout, footerColumns, subFooter } = footerData
+// const footerData = await getFooterNavigationData()
+const navigationData = await getNavigationBarData()
+const footerDataSanity = await getFooterConfig()
+const { footerAbout, footerColumns, subFooter } = footerDataSanity
+const { logo } = navigationData
+
+
+
+// const { footerAbout, footerColumns, subFooter } = footerData
 
 const socialLinksForFooter = await getSocialLinksForFooter()
 const socialLinkAttributes = await getSocialLinkAttributes()
+
+// // Data - Fully from Sanity
+// import { getFooterConfig } from '../lib/sanity'
+// import type {  } from '../lib/sanity/types'
 ---
 
 <footer class="footer">
@@ -27,7 +40,7 @@ const socialLinkAttributes = await getSocialLinkAttributes()
 			<div class="footer__cols">
 				<div class="footer__col">
 					<a aria-label="webiste logo" aria-current="page" class="footer__main-brand" href="/">
-						<img src={footerAbout.logo.src} alt={footerAbout.logo.alt} width="32" height="32" />
+						<img src={logo.src} alt={logo.alt} width="80" height="80" />
 						{footerAbout.logo.text}
 					</a>
 					<p>

@@ -3,8 +3,8 @@ import imageUrlBuilder from '@sanity/image-url'
 
 // Initialize Sanity client
 const sanityClient = createClient({
-  projectId: import.meta.env.SANITY_PROJECT_ID || 'hg0e82hx',
-  dataset: import.meta.env.SANITY_DATASET || 'private-config',
+  projectId: import.meta.env.SANITY_PROJECT_ID,
+  dataset: import.meta.env.SANITY_DATASET,
   token: import.meta.env.SANITY_TOKEN, // Required for private datasets
   apiVersion: '2024-01-01', // Use current date
   useCdn: false, // Set to false for private datasets with tokens
@@ -19,50 +19,93 @@ export function urlFor(source: any) {
   return builder.image(source)
 }
 
+// Import fallback data
+import { fallbackBlogPosts } from './blog-fallback'
+
 // Fetch all blog posts
 export async function getAllBlogPosts() {
-  const query = `*[_type == "blog"] | order(pubDate desc) {
-    _id,
-    title,
-    slug,
-    description,
-    pubDate,
-    author,
-    "image": image.asset->url,
-    tags
-  }`
+  try {
+    const query = `*[_type == "blog"] | order(pubDate desc) {
+      _id,
+      title,
+      slug,
+      description,
+      pubDate,
+      author,
+      "image": image.asset->url,
+      tags
+    }`
 
-  const posts = await sanityClient.fetch(query)
-  
-  // Handle posts without images by providing a fallback
-  return posts.map((post: any) => ({
-    ...post,
-    image: post.image || '/blog/post-01-cover.png' // Fallback to existing asset
-  }))
+    const posts = await sanityClient.fetch(query);
+    console.log('Blog posts from Sanity:', posts);
+    
+    // If no posts found in Sanity, use fallback data
+    if (!posts || posts.length === 0) {
+      console.log('No blog posts in Sanity, using fallback data')
+      return fallbackBlogPosts
+    }
+    
+    // Handle posts without images by providing a fallback
+    return posts.map((post: any) => ({
+      ...post,
+      image: post.image || '/blog/post-01-cover.png' // Fallback to existing asset
+    }))
+  } catch (error) {
+    console.error('Error fetching blog posts from Sanity:', error)
+    // Return fallback data on error
+    return fallbackBlogPosts
+  }
 }
 
 // Fetch single blog post by slug
 export async function getBlogPostBySlug(slug: string) {
-  const query = `*[_type == "blog" && slug.current == $slug][0] {
-    _id,
-    title,
-    slug,
-    description,
-    pubDate,
-    author,
-    image,
-    tags,
-    content
-  }`
+  try {
+    const query = `*[_type == "blog" && slug.current == $slug][0] {
+      _id,
+      title,
+      slug,
+      description,
+      pubDate,
+      publishedAt,
+      author,
+      image,
+      tags,
+      body,
+      content,
+      category,
+      featured
+    }`
 
-  const post = await sanityClient.fetch(query, { slug })
-  
-  if (!post) return null
-  
-  // Handle missing image
-  return {
-    ...post,
-    image: post.image || { asset: { url: '/blog/post-01-cover.png' } }
+    const post = await sanityClient.fetch(query, { slug })
+    
+    if (!post) {
+      // Try to find in fallback data
+      const fallbackPost = fallbackBlogPosts.find(p => p.slug.current === slug)
+      if (fallbackPost) {
+        return {
+          ...fallbackPost,
+          image: { asset: { url: fallbackPost.image } }
+        }
+      }
+      return null
+    }
+    
+    // Handle missing image
+    return {
+      ...post,
+      image: post.image || { asset: { url: '/blog/post-01-cover.png' } }
+    }
+  } catch (error) {
+    console.error('Error fetching blog post from Sanity:', error)
+    // Try to find in fallback data
+    const fallbackPost = fallbackBlogPosts.find(p => p.slug.current === slug)
+    if (fallbackPost) {
+      return {
+        ...fallbackPost,
+        image: { asset: { url: fallbackPost.image } }
+      }
+    }
+    return null
   }
 }
 
@@ -128,13 +171,54 @@ export async function getAllFeatureCards() {
   const query = `*[_type == "featureCard"] | order(category asc, order asc) {
     _id,
     title,
+    slug,
     image,
     description,
+    longDescription,
     category,
+    features,
+    advantages,
+    order,
+    isService
+  }`
+  
+  return await sanityClient.fetch(query)
+}
+
+// Fetch all services (feature cards marked as services)
+export async function getAllServices() {
+  const query = `*[_type == "featureCard" && isService == true] | order(category asc, order asc) {
+    _id,
+    title,
+    slug,
+    image,
+    description,
+    longDescription,
+    category,
+    features,
+    advantages,
     order
   }`
   
   return await sanityClient.fetch(query)
+}
+
+// Fetch single service by slug
+export async function getServiceBySlug(slug: string) {
+  const query = `*[_type == "featureCard" && slug.current == $slug && isService == true][0] {
+    _id,
+    title,
+    slug,
+    image,
+    description,
+    longDescription,
+    category,
+    features,
+    advantages,
+    order
+  }`
+  
+  return await sanityClient.fetch(query, { slug })
 }
 
 // Fetch feature cards by category

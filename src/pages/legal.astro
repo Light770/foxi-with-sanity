@@ -1,0 +1,144 @@
+---
+// Mentions Légales Page
+import Layout from '../layouts/Layout.astro'
+import SidebarContent from '../components/blocks/basic/StickySidebar.astro'
+import Hero from '../components/blocks/hero/PageHeader.astro'
+
+// Content
+const SEO = {
+	title: 'Mentions Légales | Foxi',
+	description: 'Informations légales concernant Foxi, nos obligations légales et nos coordonnées.'
+}
+
+const header = {
+	title: 'Mentions <strong>Légales</strong>',
+	text: 'Informations légales et réglementaires concernant Foxi et nos services.'
+}
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={header.title} text={header.text} />
+	
+	<SidebarContent>
+		<div slot="sidebar">
+			<h3>Informations Générales</h3>
+			<p>
+				Cette page contient les informations légales obligatoires concernant Foxi, 
+				nos coordonnées et nos obligations légales.
+			</p>
+		</div>
+		<div class="basic-text">
+			<h4>Éditeur du Site</h4>
+			<p>
+				Le présent site web est édité par [Nom de la Société], société [forme juridique] 
+				au capital de [montant] euros, immatriculée au Registre du Commerce et des Sociétés 
+				de [ville] sous le numéro [numéro SIRET].
+			</p>
+			<p>
+				<strong>Siège social :</strong> [Adresse complète]<br>
+				<strong>Téléphone :</strong> [Numéro de téléphone]<br>
+				<strong>Email :</strong> [Email de contact]<br>
+				<strong>Numéro de TVA intracommunautaire :</strong> [Numéro de TVA]
+			</p>
+
+			<h4>Directeur de la Publication</h4>
+			<p>
+				Le directeur de la publication est [Nom du directeur], en qualité de [fonction] 
+				de la société [Nom de la Société].
+			</p>
+		</div>
+	</SidebarContent>
+
+	<SidebarContent classes="bg-neutral-50 dark:bg-neutral-900">
+		<div slot="sidebar">
+			<h3>Hébergement</h3>
+			<p>
+				Informations concernant l'hébergement de notre site web et nos services techniques.
+			</p>
+		</div>
+		<div class="basic-text">
+			<h4>Hébergeur du Site</h4>
+			<p>
+				Le site web est hébergé par [Nom de l'hébergeur], société [forme juridique] 
+				dont le siège social est situé [adresse de l'hébergeur].
+			</p>
+			<p>
+				<strong>Téléphone :</strong> [Numéro de téléphone de l'hébergeur]<br>
+				<strong>Site web :</strong> [Site web de l'hébergeur]
+			</p>
+
+			<h4>Données Techniques</h4>
+			<p>
+				Les données sont stockées dans des centres de données sécurisés situés en [localisation]. 
+				Nous nous conformons aux réglementations en vigueur concernant la protection des données 
+				et la localisation des serveurs.
+			</p>
+		</div>
+	</SidebarContent>
+
+	<SidebarContent>
+		<div slot="sidebar">
+			<h3>Propriété Intellectuelle</h3>
+			<p>
+				Informations concernant la protection de notre propriété intellectuelle et 
+				les droits d'usage de notre contenu.
+			</p>
+		</div>
+		<div class="basic-text">
+			<h4>Droits d'Auteur</h4>
+			<p>
+				L'ensemble des contenus présents sur ce site (textes, images, vidéos, logos, icônes) 
+				sont protégés par le droit d'auteur et appartiennent à [Nom de la Société] ou à ses 
+				partenaires. Toute reproduction, représentation, modification ou adaptation est interdite 
+				sans autorisation écrite préalable.
+			</p>
+
+			<h4>Marques Déposées</h4>
+			<p>
+				La marque "Foxi" ainsi que tous les logos et signes distinctifs sont des marques 
+				déposées de [Nom de la Société]. Toute utilisation non autorisée constitue une 
+				contrefaçon passible de sanctions pénales.
+			</p>
+
+			<h4>Utilisation Autorisée</h4>
+			<p>
+				L'utilisation du site à des fins personnelles et non commerciales est autorisée. 
+				Toute autre utilisation doit faire l'objet d'une autorisation écrite préalable 
+				de notre part.
+			</p>
+		</div>
+	</SidebarContent>
+
+	<SidebarContent classes="bg-neutral-50 dark:bg-neutral-900">
+		<div slot="sidebar">
+			<h3>Responsabilité</h3>
+			<p>
+				Limitations de responsabilité concernant l'utilisation de nos services et 
+				de notre site web.
+			</p>
+		</div>
+		<div class="basic-text">
+			<h4>Limitation de Responsabilité</h4>
+			<p>
+				[Nom de la Société] met tout en œuvre pour offrir aux utilisateurs des informations 
+				et/ou des outils disponibles et vérifiés, mais ne saurait être tenue responsable 
+				des erreurs, d'une absence de disponibilité des informations et/ou de la présence 
+				de virus sur son site.
+			</p>
+
+			<h4>Liens Externes</h4>
+			<p>
+				Notre site peut contenir des liens vers des sites externes. Nous ne saurions être 
+				tenus responsables du contenu de ces sites tiers ni des dommages qui pourraient 
+				résulter de leur utilisation.
+			</p>
+
+			<h4>Force Majeure</h4>
+			<p>
+				[Nom de la Société] ne pourra être tenue responsable de l'inexécution ou des retards 
+				dans l'exécution de ses obligations dues à des cas de force majeure tels que définis 
+				par la jurisprudence française.
+			</p>
+		</div>
+	</SidebarContent>
+</Layout>

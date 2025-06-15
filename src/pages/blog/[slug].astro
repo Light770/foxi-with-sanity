@@ -19,10 +19,14 @@ interface BlogPost {
   slug: { current: string };
   description: string;
   pubDate: string;
+  publishedAt?: string;
   author: string;
   image: any;
   tags?: string[];
   content?: any;
+  body?: any;
+  category?: string;
+  featured?: boolean;
 }
 
 export async function getStaticPaths() {
@@ -69,5 +73,5 @@ const formattedPost = {
 ---
 
 <Layout frontmatter={formattedPost}>
-	<PortableText content={post.content} />
+	<PortableText content={post.body || post.content} />
 </Layout>

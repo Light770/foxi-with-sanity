@@ -14,35 +14,23 @@ import { Image } from 'astro:assets'
 import Button from '../../ui/Button.astro'
 import AvatarGroup from '../../ui/AvatarGroup.astro'
 import { portableTextToHTML, isPortableText } from '../../../lib/portableTextHelpers'
-
-// Props
-type Props = {
-	data?: any
-}
-const { data } = Astro.props
-
-// Content - use data from props or fallback to defaults
-// - Hero Image
 import heroImage from '../../../assets/hero-01.png'
-// - Avatars
-import user1 from '../../../assets/avatars/avatar-01.webp'
-import user2 from '../../../assets/avatars/avatar-02.webp'
-import user3 from '../../../assets/avatars/avatar-03.webp'
-const defaultAvatars = [
-	{ image: { src: user1.src, alt: 'user name' }, link: '/' },
-	{ image: { src: user2.src, alt: 'user name' }, link: '/' },
-	{ image: { src: user3.src, alt: 'user name' }, link: '/' }
-]
+
+
+// Data
+import { getHeroSection } from '../../../lib/sanity'
+
+// Fetch dynamic data from Sanity
+const HeroData = await getHeroSection('home')
 
 // Hero content with Sanity data or defaults
 const heroContent = {
-	customerCount: data?.customerCount || '30K+',
-	title: isPortableText(data?.title) ? portableTextToHTML(data.title) : (data?.title || 'Enhance team <strong>performance</strong> with seamless integration'),
-	subtitle: data?.subtitle || 'Work smarter, not harder, with our innovative platform',
-	buttonText: data?.ctaText || data?.buttonText || 'Get started for free',
-	buttonLink: data?.ctaLink || data?.buttonLink || '/',
-	avatars: data?.avatars || defaultAvatars,
-	heroImage: data?.image || data?.heroImage || heroImage
+	// customerCount: data?.customerCount,
+	title: isPortableText(HeroData?.title) ? portableTextToHTML(HeroData.title) : (HeroData?.title),
+	subtitle: HeroData?.subtitle,
+	buttonText: HeroData?.ctaText || HeroData?.buttonText,
+	buttonLink: HeroData?.ctaLink || HeroData?.buttonLink || '/',
+	heroImage: HeroData?.image || HeroData?.heroImage || heroImage
 }
 ---
 
@@ -50,10 +38,6 @@ const heroContent = {
 	<Row>
 		<Col span="2" />
 		<Col span="8" align="center">
-			<ChipNotification radius="rounded-full" classes="mb-6">
-				<strong>{heroContent.customerCount}</strong> satisfied customers
-				<AvatarGroup avatars={heroContent.avatars} radius="rounded-full" slot="button" />
-			</ChipNotification>
 			<h1 set:html={heroContent.title}></h1>
 
 			<p class="pb-0 text-lg">{heroContent.subtitle}</p>

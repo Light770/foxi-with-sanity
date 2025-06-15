@@ -1,0 +1,200 @@
+---
+// Politique de Confidentialité Page
+import Layout from '../layouts/Layout.astro'
+import SidebarContent from '../components/blocks/basic/StickySidebar.astro'
+import Hero from '../components/blocks/hero/PageHeader.astro'
+
+// Content
+const SEO = {
+	title: 'Politique de Confidentialité | Foxi',
+	description: 'Notre politique de confidentialité explique comment nous collectons, utilisons et protégeons vos données personnelles.'
+}
+
+const header = {
+	title: 'Politique de <strong>Confidentialité</strong>',
+	text: 'Nous respectons votre vie privée et nous nous engageons à protéger vos données personnelles.'
+}
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={header.title} text={header.text} />
+	
+	<SidebarContent>
+		<div slot="sidebar">
+			<h3>Introduction</h3>
+			<p>
+				Cette politique de confidentialité explique comment nous collectons, 
+				utilisons, stockons et protégeons vos informations personnelles.
+			</p>
+		</div>
+		<div class="basic-text">
+			<h4>Notre Engagement</h4>
+			<p>
+				Chez Foxi, nous prenons la protection de vos données personnelles très au sérieux. 
+				Cette politique de confidentialité vous informe sur la manière dont nous traitons 
+				vos informations personnelles lorsque vous utilisez nos services.
+			</p>
+			<p>
+				Nous nous conformons au Règlement Général sur la Protection des Données (RGPD) 
+				ainsi qu'à la loi française "Informatique et Libertés" modifiée.
+			</p>
+
+			<h4>Responsable du Traitement</h4>
+			<p>
+				Le responsable du traitement des données est [Nom de la Société], 
+				dont les coordonnées sont mentionnées dans nos mentions légales.
+			</p>
+		</div>
+	</SidebarContent>
+
+	<SidebarContent classes="bg-neutral-50 dark:bg-neutral-900">
+		<div slot="sidebar">
+			<h3>Données Collectées</h3>
+			<p>
+				Informations sur les types de données que nous collectons et 
+				les moyens de collecte utilisés.
+			</p>
+		</div>
+		<div class="basic-text">
+			<h4>Données d'Inscription</h4>
+			<p>
+				Lors de votre inscription, nous collectons vos informations d'identification 
+				telles que votre nom, prénom, adresse email, et toute autre information 
+				nécessaire à la création de votre compte.
+			</p>
+
+			<h4>Données d'Utilisation</h4>
+			<p>
+				Nous collectons automatiquement certaines informations sur votre utilisation 
+				de nos services, notamment votre adresse IP, le type de navigateur, 
+				les pages visitées et les actions effectuées.
+			</p>
+
+			<h4>Cookies et Technologies Similaires</h4>
+			<p>
+				Nous utilisons des cookies et des technologies similaires pour améliorer 
+				votre expérience, analyser l'utilisation de nos services et personnaliser 
+				le contenu. Vous pouvez gérer vos préférences de cookies à tout moment.
+			</p>
+		</div>
+	</SidebarContent>
+
+	<SidebarContent>
+		<div slot="sidebar">
+			<h3>Utilisation des Données</h3>
+			<p>
+				Explication des finalités pour lesquelles nous utilisons 
+				vos données personnelles.
+			</p>
+		</div>
+		<div class="basic-text">
+			<h4>Fourniture des Services</h4>
+			<p>
+				Nous utilisons vos données pour vous fournir nos services, 
+				gérer votre compte, traiter vos demandes et vous permettre 
+				d'utiliser toutes les fonctionnalités de Foxi.
+			</p>
+
+			<h4>Communication</h4>
+			<p>
+				Nous pouvons utiliser vos informations de contact pour vous envoyer 
+				des notifications importantes concernant votre compte, des mises à jour 
+				de nos services ou des informations marketing (avec votre consentement).
+			</p>
+
+			<h4>Amélioration des Services</h4>
+			<p>
+				Nous analysons les données d'utilisation pour comprendre comment 
+				nos services sont utilisés et les améliorer en conséquence.
+			</p>
+
+			<h4>Conformité Légale</h4>
+			<p>
+				Nous pouvons traiter vos données pour nous conformer à nos obligations 
+				légales, réglementaires ou pour répondre aux demandes des autorités compétentes.
+			</p>
+		</div>
+	</SidebarContent>
+
+	<SidebarContent classes="bg-neutral-50 dark:bg-neutral-900">
+		<div slot="sidebar">
+			<h3>Vos Droits</h3>
+			<p>
+				Information sur vos droits concernant vos données personnelles 
+				et comment les exercer.
+			</p>
+		</div>
+		<div class="basic-text">
+			<h4>Droit d'Accès et de Rectification</h4>
+			<p>
+				Vous avez le droit d'accéder à vos données personnelles et de demander 
+				leur rectification si elles sont inexactes ou incomplètes.
+			</p>
+
+			<h4>Droit à l'Effacement</h4>
+			<p>
+				Vous pouvez demander la suppression de vos données personnelles dans 
+				certaines circonstances, notamment lorsque ces données ne sont plus 
+				nécessaires aux finalités pour lesquelles elles ont été collectées.
+			</p>
+
+			<h4>Droit à la Portabilité</h4>
+			<p>
+				Vous avez le droit de recevoir vos données dans un format structuré 
+				et de les transmettre à un autre responsable de traitement.
+			</p>
+
+			<h4>Droit d'Opposition</h4>
+			<p>
+				Vous pouvez vous opposer au traitement de vos données à des fins de 
+				marketing direct ou pour des motifs légitimes.
+			</p>
+
+			<h4>Exercer vos Droits</h4>
+			<p>
+				Pour exercer ces droits, contactez-nous à l'adresse : 
+				<strong>privacy@foxi.com</strong>. Nous répondrons dans les meilleurs délais 
+				et au plus tard dans un délai d'un mois.
+			</p>
+		</div>
+	</SidebarContent>
+
+	<SidebarContent>
+		<div slot="sidebar">
+			<h3>Sécurité et Conservation</h3>
+			<p>
+				Informations sur la sécurité de vos données et 
+				la durée de conservation.
+			</p>
+		</div>
+		<div class="basic-text">
+			<h4>Mesures de Sécurité</h4>
+			<p>
+				Nous mettons en place des mesures techniques et organisationnelles 
+				appropriées pour protéger vos données contre la perte, l'utilisation 
+				abusive, l'accès non autorisé, la divulgation, la modification ou la destruction.
+			</p>
+
+			<h4>Durée de Conservation</h4>
+			<p>
+				Nous conservons vos données personnelles uniquement pendant la durée 
+				nécessaire aux finalités pour lesquelles elles ont été collectées, 
+				conformément à nos obligations légales.
+			</p>
+
+			<h4>Transferts Internationaux</h4>
+			<p>
+				Si nous transférons vos données en dehors de l'Union européenne, 
+				nous nous assurons que des garanties appropriées sont en place pour 
+				protéger vos données.
+			</p>
+
+			<h4>Contact</h4>
+			<p>
+				Pour toute question concernant cette politique de confidentialité, 
+				contactez notre Délégué à la Protection des Données à l'adresse : 
+				<strong>dpo@foxi.com</strong>
+			</p>
+		</div>
+	</SidebarContent>
+</Layout>

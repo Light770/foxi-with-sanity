@@ -23,59 +23,22 @@ export interface NavData {
 	navActions: NavAction[]
 }
 
-// Fallback navigation data
-const fallbackNavigationData: NavigationConfig = {
-	_id: 'fallback',
-	logo: {
-		image: '/logo.svg',
-		alt: 'The tailwind astro theme',
-		text: 'Foxi.'
-	},
-	navItems: [
-		{ name: 'Home', link: '/' },
-		{ name: 'Pricing', link: '/pricing' },
-		{ name: 'Features', link: '/features' },
-		{
-			name: 'Resources',
-			link: '#',
-			submenu: [
-				{ name: 'Blog', link: '/blog' },
-				{ name: 'Changelog', link: '/changelog' },
-				{ name: 'FAQ', link: '/faq' },
-				{ name: 'Terms', link: '/terms' }
-			]
-		},
-		{ name: 'Contact', link: '/contact' }
-	],
-	navActions: [{ name: 'Try it now', link: '/', style: 'primary', size: 'base', variation: '' }],
-	mobileMenuSettings: {
-		showLogo: true,
-		closeOnItemClick: true
-	}
-}
-
 // Cache for navigation config
 let navigationConfigCache: NavigationConfig | null = null
 
-// Get navigation configuration from Sanity with fallback
+// Get navigation configuration from Sanity
 export async function getNavigationConfiguration(): Promise<NavigationConfig> {
 	if (navigationConfigCache) {
 		return navigationConfigCache
 	}
 
-	try {
-		const sanityConfig = await getNavigationConfig()
-		if (sanityConfig) {
-			navigationConfigCache = sanityConfig
-		} else {
-			navigationConfigCache = fallbackNavigationData
-		}
-		return navigationConfigCache as NavigationConfig
-	} catch (error) {
-		console.warn('Failed to fetch navigation config from Sanity, using fallback:', error)
-		navigationConfigCache = fallbackNavigationData
-		return navigationConfigCache as NavigationConfig
+	const sanityConfig = await getNavigationConfig()
+	if (!sanityConfig) {
+		throw new Error('Navigation configuration not found in Sanity')
 	}
+	
+	navigationConfigCache = sanityConfig
+	return navigationConfigCache
 }
 
 // Convert NavigationConfig to legacy NavData format for backward compatibility
@@ -90,9 +53,6 @@ function convertToLegacyFormat(config: NavigationConfig): NavData {
 		navActions: config.navActions
 	}
 }
-
-// Export legacy format for backward compatibility
-export const navigationBarData: NavData = convertToLegacyFormat(fallbackNavigationData)
 
 // Export function to get dynamic navigation data
 export async function getNavigationBarData(): Promise<NavData> {

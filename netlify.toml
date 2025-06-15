@@ -4,8 +4,8 @@
 
 [build.environment]
   # Add your Sanity project details
-  PUBLIC_SANITY_PROJECT_ID = "hg0e82hx"
-  PUBLIC_SANITY_DATASET = "private-config"
+  PUBLIC_SANITY_PROJECT_ID = "j4vtw3ym"
+  PUBLIC_SANITY_DATASET = "production-dataset"
 
   # Optional: API version
   PUBLIC_SANITY_API_VERSION = "2024-01-01"

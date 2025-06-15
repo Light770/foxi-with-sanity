@@ -1,0 +1,96 @@
+---
+// Partners Page (Partenaires)
+import Layout from '../layouts/Layout.astro'
+import Hero from '../components/blocks/hero/PageHeader.astro'
+import SocialProof from '../components/blocks/socialproof/Basic.astro'
+import CTA from '../components/blocks/CTA/BasicLight.astro'
+
+// Content
+const SEO = {
+	title: 'Partenaires | Foxi',
+	description: 'Découvrez nos partenaires de confiance et rejoignez notre écosystème de partenaires.'
+}
+
+const header = {
+	title: 'Nos <strong>Partenaires</strong>',
+	text: 'Ensemble, nous créons des solutions plus performantes pour nos clients.'
+}
+
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={header.title} text={header.text} />
+	
+	<!-- Current Partners (using social proof component) -->
+	<SocialProof 
+		title="Ils Nous Font Confiance"
+		text="Découvrez les entreprises qui collaborent avec nous pour offrir des solutions exceptionnelles."
+	/>
+	
+	<!-- Partner Benefits Section -->
+	<section class="py-16 bg-neutral-50 dark:bg-neutral-900">
+		<div class="container mx-auto px-4">
+			<div class="max-w-4xl mx-auto text-center">
+				<h2 class="text-3xl font-bold mb-6">Pourquoi Devenir Partenaire ?</h2>
+				<p class="text-lg text-neutral-600 dark:text-neutral-400 mb-12">
+					Rejoignez notre réseau de partenaires et bénéficiez d'avantages exclusifs pour développer votre activité.
+				</p>
+				
+				<div class="grid md:grid-cols-3 gap-8">
+					<div class="text-center">
+						<div class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+							<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+								<path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+							</svg>
+						</div>
+						<h3 class="text-xl font-semibold mb-2">Réseau Étendu</h3>
+						<p class="text-neutral-600 dark:text-neutral-400">
+							Accédez à notre réseau de clients et partenaires pour développer votre business.
+						</p>
+					</div>
+					
+					<div class="text-center">
+						<div class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+							<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+								<path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+							</svg>
+						</div>
+						<h3 class="text-xl font-semibold mb-2">Outils Dédiés</h3>
+						<p class="text-neutral-600 dark:text-neutral-400">
+							Bénéficiez d'outils et de ressources exclusives pour optimiser votre collaboration.
+						</p>
+					</div>
+					
+					<div class="text-center">
+						<div class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+							<svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+								<path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
+								<path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
+							</svg>
+						</div>
+						<h3 class="text-xl font-semibold mb-2">Support Privilégié</h3>
+						<p class="text-neutral-600 dark:text-neutral-400">
+							Profitez d'un support prioritaire et d'un accompagnement personnalisé.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	
+	<!-- CTA - Devenir partenaire -->
+	<CTA 
+		title="Prêt à Devenir Partenaire ?"
+		text="Rejoignez notre écosystème de partenaires et développons ensemble des solutions innovantes."
+		cta={{
+			text: "Candidater Maintenant",
+			href: "#partner-application",
+			style: "primary"
+		}}
+		secondaryCta={{
+			text: "En Savoir Plus",
+			href: "/contact",
+			style: "secondary"
+		}}
+	/>
+</Layout>

@@ -1,0 +1,64 @@
+---
+// Components
+// - Layout
+import Layout from '../layouts/Layout.astro'
+// - UI
+import FormHero from '../components/blocks/hero/ContactHero.astro'
+import CTA from '../components/blocks/CTA/BasicDark.astro'
+import ContactCards from '../components/blocks/contact/ContactCards.astro'
+import FAQ from '../components/blocks/FAQ/FaqSticky.astro'
+
+// Data - From Sanity
+import { getFAQsByCategory } from '../lib/sanity'
+
+// Content
+// - SEO
+const SEO = {
+	title: 'Foxi | Get in Touch with Us',
+	description:
+		'Have questions or need assistance? Contact Foxi today for support, inquiries, or feedback. Our team is here to help you make the most of your Foxi experience.'
+}
+// - Page Header
+const header = {
+	title: 'Un projet ? Une question ? <strong>Écrivez-nous</strong> !',
+	text: "Une question, besoin d'assistance ou envie de partager vos retours ? Notre équipe est là pour vous accompagner."
+}
+
+// Get Support FAQ data for contact page
+const faqData = await getFAQsByCategory('Support')
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<!-- Nous contacter (sign_up form) -->
+	<FormHero
+		title={header.title}
+		text={header.text}
+		id="contact"
+		classes="bg-neutral-50 dark:bg-neutral-950/80"
+	/>
+	
+	<!-- Nous trouver (map + contact cards) -->
+	<ContactCards classes="dark:bg-neutral-950/80" />
+	
+	<!-- TODO: Add map component here -->
+	<section class="py-16 bg-neutral-50 dark:bg-neutral-900">
+		<div class="container mx-auto px-4">
+			<h2 class="text-3xl font-bold text-center mb-12">Nous Trouver</h2>
+			<div class="max-w-4xl mx-auto">
+				<!-- Placeholder for map component -->
+				<div class="bg-neutral-200 dark:bg-neutral-800 rounded-lg h-96 flex items-center justify-center">
+					<p class="text-neutral-600 dark:text-neutral-400">Carte interactive à venir</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	
+	<!-- Foire aux questions et assistance (faq) -->
+	<FAQ 
+		title="Questions Fréquentes"
+		text="Trouvez rapidement des réponses à vos questions les plus courantes sur notre support et nos services."
+		data={faqData}
+	/>
+	
+	<CTA />
+</Layout>

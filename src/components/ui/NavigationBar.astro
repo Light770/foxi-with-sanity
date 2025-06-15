@@ -39,8 +39,8 @@ const savedNavActions = navActions
 		<nav aria-label="main navigation" role="navigation" class="header__nav">
 			<!-- Logo -->
 			<a href="/" class="header__logo">
-				<img src={logo.src} alt={logo.alt} width="48" height="48" />
-				<span>{logo.text}</span>
+				<img src={logo.src} alt={logo.alt} width="200" height="200" />
+				<!-- <span>{logo.text}</span> // Add back if the text of the logo is needed. --> 
 			</a>
 
 			<!-- Menu toggle -->
@@ -62,7 +62,7 @@ const savedNavActions = navActions
 				{
 					navItems.map((item) => (
 						<li role="none" class="header__menu-item">
-							{!item.submenu ? (
+							{!item.submenu || item.submenu.length === 0 ? (
 								<a
 									href={item.link}
 									role="menuitem"
@@ -79,14 +79,14 @@ const savedNavActions = navActions
 									<Icon name="chevron-down" class="header__menu-chevron" />
 								</span>
 							)}
-							{item.submenu && (
+							{item.submenu && item.submenu.length > 0 && (
 								<ul class="header__submenu">
 									{item.submenu.map((subItem) => (
 										<li role="none" class="header__submenu-item">
 											<a
 												href={subItem.link}
 												role="menuitem"
-												class={`header__menu-link ${isActivePath(item.link) ? 'active' : ''}`}
+												class={`header__menu-link ${isActivePath(subItem.link) ? 'active' : ''}`}
 											>
 												{subItem.name}
 											</a>

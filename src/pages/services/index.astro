@@ -1,0 +1,53 @@
+---
+// Services Archive Page
+// Components
+import Layout from '../../layouts/Layout.astro'
+import Hero from '../../components/blocks/hero/PageHeader.astro'
+import FeatureCards from '../../components/blocks/features/FeatureCards.astro'
+import SignUpModal from '../../components/blocks/modal/SignUp.astro'
+import CTA from '../../components/blocks/CTA/BasicDark.astro'
+
+// Data - From Sanity (services will be feature cards)
+import { getAllFeatureCards, getAllServices } from '../../lib/sanity'
+
+// Content
+const SEO = {
+	title: 'Nos Services | Foxi',
+	description: 'Découvrez tous nos services pour améliorer votre productivité et streamliner votre workflow.'
+}
+
+const header = {
+	title: 'Nos <strong>Services</strong>',
+	text: 'Explorez notre gamme complète de services conçus pour transformer votre façon de travailler.'
+}
+
+// Fetch all services (feature cards marked as services)
+const allServices = await getAllServices()
+
+// If no services found, fallback to all feature cards
+const servicesData = allServices && allServices.length > 0 ? allServices : await getAllFeatureCards() || []
+
+---
+
+<Layout title={SEO.title} description={SEO.description}>
+	<Hero title={header.title} text={header.text} />
+	
+	<!-- TODO: Add filter component here -->
+	<!-- <FilterComponent /> -->
+	
+	<FeatureCards 
+		data={servicesData}
+		header={{
+			title: [{
+				_type: 'block',
+				children: [{ _type: 'span', text: 'Nos Solutions' }]
+			}],
+			text: 'Choisissez parmi nos services spécialisés pour répondre à vos besoins spécifiques.'
+		}}
+	/>
+	
+	<!-- Premium content download -->
+	<SignUpModal />
+	
+	<CTA />
+</Layout>

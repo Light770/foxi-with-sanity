@@ -69,6 +69,16 @@ export async function getSocialLinksConfiguration(): Promise<SocialLinksConfig> 
 	try {
 		const sanityConfig = await getSocialLinksConfig()
 		if (sanityConfig) {
+			// Ensure displaySettings and seoSettings exist
+			if (!sanityConfig.displaySettings) {
+				sanityConfig.displaySettings = fallbackSocialLinksData.displaySettings
+			}
+			if (!sanityConfig.seoSettings) {
+				sanityConfig.seoSettings = fallbackSocialLinksData.seoSettings
+			}
+			if (!sanityConfig.socialLinks) {
+				sanityConfig.socialLinks = []
+			}
 			socialLinksConfigCache = sanityConfig
 		} else {
 			socialLinksConfigCache = fallbackSocialLinksData
@@ -83,6 +93,9 @@ export async function getSocialLinksConfiguration(): Promise<SocialLinksConfig> 
 
 // Convert SocialLinksConfig to legacy SocialLink format for backward compatibility
 function convertToLegacyFormat(config: SocialLinksConfig): SocialLink[] {
+	if (!config.socialLinks || !Array.isArray(config.socialLinks)) {
+		return []
+	}
 	return config.socialLinks.map(link => ({
 		name: link.platform === 'other' ? (link.customPlatformName || 'custom') : link.platform,
 		link: link.url,
@@ -107,12 +120,12 @@ export async function getFullSocialLinksConfig(): Promise<SocialLinksConfig> {
 // Export individual functions for specific data
 export async function getSocialLinksForHeader(): Promise<SanitySocialLink[]> {
 	const config = await getSocialLinksConfiguration()
-	return config.displaySettings.showInHeader ? config.socialLinks : []
+	return config.displaySettings?.showInHeader ? config.socialLinks : []
 }
 
 export async function getSocialLinksForFooter(): Promise<SanitySocialLink[]> {
 	const config = await getSocialLinksConfiguration()
-	return config.displaySettings.showInFooter ? config.socialLinks : []
+	return config.displaySettings?.showInFooter ? config.socialLinks : []
 }
 
 // Helper function to get social link attributes for SEO
@@ -120,8 +133,8 @@ export async function getSocialLinkAttributes(): Promise<{ rel: string; target: 
 	const config = await getSocialLinksConfiguration()
 	const relParts = []
 	
-	if (config.seoSettings.addNofollow) relParts.push('nofollow')
-	if (config.seoSettings.addNoopener) relParts.push('noopener')
+	if (config.seoSettings?.addNofollow) relParts.push('nofollow')
+	if (config.seoSettings?.addNoopener) relParts.push('noopener')
 	
 	return {
 		rel: relParts.join(' '),
